@@ -1,0 +1,3 @@
+emp_id,annual_balance,sick_used,comp_days,version,last_updated
+EMP001,10.5,2.0,1.0,5,2025-04-30
+EMP002,12.0,0.0,0.0,1,2025-04-01
