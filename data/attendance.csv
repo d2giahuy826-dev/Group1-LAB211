@@ -1,0 +1,3 @@
+record_id,employee_id,work_date,check_in,check_out,work_hours,ot_hours
+ATT001,EMP001,2025-04-01,08:00,17:00,8.0,0.0
+ATT002,EMP001,2025-04-02,08:00,20:00,8.0,3.0
