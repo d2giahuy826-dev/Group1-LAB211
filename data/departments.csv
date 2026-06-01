@@ -1,6 +1,21 @@
-dept_id,dept_name,manager_id
-DEPT01,Cong nghe thong tin,EMP001
-DEPT02,Ke toan,EMP002
-DEPT03,Kinh doanh,EMP003
-DEPT04,Nhan su,EMP008
-DEPT05,Hanh chinh,EMP006
+deptId,deptName,managerId,location,headCount
+DEPT001,Engineering,EMP0031,Floor 4,58
+DEPT002,Marketing,EMP0035,Floor 1,14
+DEPT003,Finance,EMP0006,Floor 9,65
+DEPT004,HR,EMP0044,Floor 3,49
+DEPT005,Sales,EMP0027,Floor 3,95
+DEPT006,Operations,EMP0033,Floor 7,57
+DEPT007,Legal,EMP0044,Floor 10,50
+DEPT008,R&D,EMP0014,Floor 7,40
+DEPT009,IT Support,EMP0044,Floor 2,87
+DEPT010,Customer Service,EMP0009,Floor 8,99
+DEPT011,Procurement,EMP0031,Floor 7,54
+DEPT012,Logistics,EMP0036,Floor 8,70
+DEPT013,Quality Assurance,EMP0013,Floor 4,38
+DEPT014,Product,EMP0015,Floor 10,15
+DEPT015,Design,EMP0024,Floor 8,90
+DEPT016,Business Development,EMP0035,Floor 8,96
+DEPT017,Data Analytics,EMP0008,Floor 4,71
+DEPT018,Security,EMP0041,Floor 9,25
+DEPT019,Compliance,EMP0011,Floor 1,87
+DEPT020,Training,EMP0010,Floor 2,76
