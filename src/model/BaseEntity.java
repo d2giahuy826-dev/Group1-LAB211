@@ -1,76 +1,75 @@
 package model;
 
-public class Department extends BaseEntity {
+/**
+ * BaseEntity – Lớp trừu tượng gốc cho tất cả entity trong hệ thống.
+ *
+ * Cung cấp:
+ *  - id chung
+ *  - implement CsvMappable (toCsvLine / fromCsvLine)
+ *  - các phương thức validate tái sử dụng
+ */
+public abstract class BaseEntity implements CsvMappable {
 
-    private String name;
-    private String managerId;
-    private int totalEmployees;
+    protected String id;
 
-    public Department() {
+    // ─── Constructors ─────────────────────────────────────────────────────────
+
+    public BaseEntity() {}
+
+    public BaseEntity(String id) {
+        setId(id);
     }
 
-    public Department(String id, String name, String managerId, int totalEmployees) {
-        super(id);
-        setName(name);
-        setManagerId(managerId);
-        setTotalEmployees(totalEmployees);
+    // ─── Getter / Setter ──────────────────────────────────────────────────────
+
+    public String getId() { return id; }
+
+    public void setId(String id) {
+        validateRequired(id, "ID");
+        this.id = id.trim();
     }
 
-    public String getName() {
-        return name;
-    }
+    // ─── Validate helpers (dùng lại trong subclass) ───────────────────────────
 
-    public void setName(String name) {
-        validateRequired(name, "Department name");
-        this.name = name.trim();
-    }
-
-    public String getManagerId() {
-        return managerId;
-    }
-
-    public void setManagerId(String managerId) {
-        validateRequired(managerId, "Manager ID");
-        this.managerId = managerId.trim();
-    }
-
-    public int getTotalEmployees() {
-        return totalEmployees;
-    }
-
-    public void setTotalEmployees(int totalEmployees) {
-        validateNonNegative(totalEmployees, "Total employees");
-        this.totalEmployees = totalEmployees;
-    }
-
-    @Override
-    public String toCsvLine() {
-        return id + "," + name + "," + managerId + "," + totalEmployees;
-    }
-
-    @Override
-    public void fromCsvLine(String csvLine) {
-        validateRequired(csvLine, "CSV line");
-
-        String[] parts = csvLine.split(",");
-
-        if (parts.length != 4) {
-            throw new IllegalArgumentException("Invalid Department CSV format.");
+    /**
+     * Ném IllegalArgumentException nếu value null hoặc rỗng.
+     */
+    protected void validateRequired(String value, String fieldName) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(fieldName + " is required and cannot be blank.");
         }
-
-        setId(parts[0]);
-        setName(parts[1]);
-        setManagerId(parts[2]);
-        setTotalEmployees(Integer.parseInt(parts[3]));
     }
+
+    /**
+     * Ném IllegalArgumentException nếu value âm (double).
+     */
+    protected void validateNonNegative(double value, String fieldName) {
+        if (value < 0) {
+            throw new IllegalArgumentException(fieldName + " must not be negative. Got: " + value);
+        }
+    }
+
+    /**
+     * Ném IllegalArgumentException nếu value âm (int).
+     */
+    protected void validateNonNegative(int value, String fieldName) {
+        if (value < 0) {
+            throw new IllegalArgumentException(fieldName + " must not be negative. Got: " + value);
+        }
+    }
+
+    // ─── CsvMappable (subclass bắt buộc override) ────────────────────────────
+
+    @Override
+    public abstract String toCsvLine();
+
+    @Override
+    public abstract void fromCsvLine(String csvLine);
+
+    // ─── toString ────────────────────────────────────────────────────────────
 
     @Override
     public String toString() {
-        return "Department{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", managerId='" + managerId + '\'' +
-                ", totalEmployees=" + totalEmployees +
-                '}';
+        return getClass().getSimpleName() + "{id='" + id + "'}";
     }
 }
