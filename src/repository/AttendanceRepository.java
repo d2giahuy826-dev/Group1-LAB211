@@ -31,6 +31,7 @@ public class AttendanceRepository {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
+                if (isHeaderLine(line, "attendId")) continue;
                 AttendanceRecord record = new AttendanceRecord();
                 record.fromCsvLine(line);
                 list.add(record);
@@ -39,6 +40,11 @@ public class AttendanceRepository {
             System.err.println("Error reading attendance: " + e.getMessage());
         }
         return list;
+    }
+
+    private boolean isHeaderLine(String line, String firstColumnName) {
+        String[] parts = line.split(",", -1);
+        return parts.length > 0 && parts[0].trim().equalsIgnoreCase(firstColumnName);
     }
 
     public void saveAll(List<AttendanceRecord> list) {
@@ -59,7 +65,7 @@ public class AttendanceRepository {
 
     public List<AttendanceRecord> findByEmployeeId(String employeeId) {
         return getAll().stream()
-                .filter(r -> r.getEmployeeId().equals(employeeId))
+                .filter(r -> r.getEmpId().equals(employeeId))
                 .collect(Collectors.toList());
     }
 }
