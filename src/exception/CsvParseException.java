@@ -1,4 +1,4 @@
-package model;
+package exception;
 public class CsvParseException extends Exception {
 
     public CsvParseException(String message) {
