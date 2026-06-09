@@ -6,8 +6,3 @@ public class InsufficientLeaveException extends Exception {
         super(message);
     }
 }
-if (daysRequested > remainingDays) {
-    throw new InsufficientLeaveException(
-        "Not enough leave balance."
-    );
-}       

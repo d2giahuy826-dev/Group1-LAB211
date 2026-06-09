@@ -25,7 +25,7 @@ public enum EmpType {
      * Ném IllegalArgumentException nếu không hợp lệ.
      */
     public static EmpType fromString(String value) {
-        if (value == null || value.isBlank()) {
+        if (value == null || value.trim().isEmpty()) {
             throw new IllegalArgumentException("EmpType cannot be null or blank.");
         }
         return EmpType.valueOf(value.trim().toUpperCase());

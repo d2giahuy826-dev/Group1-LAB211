@@ -25,7 +25,7 @@ public enum LeaveStatus {
      * Parse chuỗi từ CSV (không phân biệt hoa/thường).
      */
     public static LeaveStatus fromString(String value) {
-        if (value == null || value.isBlank()) {
+        if (value == null || value.trim().isEmpty()) {
             throw new IllegalArgumentException("LeaveStatus cannot be null or blank.");
         }
         return LeaveStatus.valueOf(value.trim().toUpperCase());

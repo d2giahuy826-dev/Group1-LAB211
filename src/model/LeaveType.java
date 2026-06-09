@@ -22,7 +22,7 @@ public enum LeaveType {
      * Parse chuỗi từ CSV (không phân biệt hoa/thường).
      */
     public static LeaveType fromString(String value) {
-        if (value == null || value.isBlank()) {
+        if (value == null || value.trim().isEmpty()) {
             throw new IllegalArgumentException("LeaveType cannot be null or blank.");
         }
         return LeaveType.valueOf(value.trim().toUpperCase());
