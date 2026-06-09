@@ -5,6 +5,7 @@ import exception.OptimisticLockException;
 import java.io.*;
 import java.util.*;
 import model.PayrollEntry;
+import model.PayStatus;
 
 public class PayrollEntryRepository {
 
@@ -71,13 +72,13 @@ public class PayrollEntryRepository {
             throw new IllegalArgumentException("Payroll entry not found: " + payrollId);
         }
 
-        if ("PROCESSED".equalsIgnoreCase(entry.getStatus())) {
+        if (entry.isProcessed() || entry.getStatus() == PayStatus.PROCESSED) {
             throw new DuplicatePaymentException(
                     "Payroll already processed: " + payrollId
             );
         }
 
-        entry.setStatus("PROCESSED");
+        entry.setStatus(PayStatus.PROCESSED);
         update(entry);
     }
 
@@ -95,13 +96,13 @@ public class PayrollEntryRepository {
             );
         }
 
-        if ("PROCESSED".equalsIgnoreCase(current.getStatus())) {
+        if (current.isProcessed() || current.getStatus() == PayStatus.PROCESSED) {
             throw new DuplicatePaymentException(
                     "Payroll already processed: " + updatedEntry.getId()
             );
         }
 
-        updatedEntry.setStatus("PROCESSED");
+        updatedEntry.setStatus(PayStatus.PROCESSED);
         updatedEntry.setVersion(expectedVersion + 1);
 
         update(updatedEntry);

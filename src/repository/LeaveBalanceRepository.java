@@ -14,7 +14,7 @@ public class LeaveBalanceRepository {
 
     public LeaveBalance findByEmployeeId(String employeeId) {
         for (LeaveBalance b : balances) {
-            if (b.getEmployeeId().equals(employeeId)) {
+            if (b.getEmpId().equals(employeeId)) {
                 return b;
             }
         }
