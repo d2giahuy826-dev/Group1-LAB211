@@ -2,6 +2,7 @@ package data;
 
 import java.io.*;
 import java.nio.file.*;
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -120,8 +121,10 @@ public class DataGenerator {
             String id = String.format("EMP%04d", i + 1);
             ids.add(id);
 
-            String name = LAST_NAMES[RNG.nextInt(LAST_NAMES.length)]
-                        + " " + FIRST_NAMES[RNG.nextInt(FIRST_NAMES.length)];
+            String name = removeDiacritics(
+                    LAST_NAMES[RNG.nextInt(LAST_NAMES.length)]
+                    + " " + FIRST_NAMES[RNG.nextInt(FIRST_NAMES.length)]
+            );
             String deptId  = deptIds.get(i % deptIds.size());
             String type    = EMP_TYPES[RNG.nextInt(EMP_TYPES.length)];
             double base    = type.equals("FULLTIME")
@@ -141,6 +144,13 @@ public class DataGenerator {
         }
         writeCsv("employees.csv", rows);
         return ids;
+    }
+
+    static String removeDiacritics(String input) {
+        if (input == null) return null;
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+        String withoutAccents = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        return withoutAccents.replace("Đ", "D").replace("đ", "d");
     }
 
     // ─── 3. leave_balances.csv ───────────────────────────────────────────────

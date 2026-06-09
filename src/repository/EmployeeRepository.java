@@ -30,14 +30,25 @@ public class EmployeeRepository {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
-                Employee employee = new Employee();
-                employee.fromCsvLine(line);
-                list.add(employee);
+                if (isHeaderLine(line, "empId")) continue;
+
+                try {
+                    Employee employee = new Employee();
+                    employee.fromCsvLine(line);
+                    list.add(employee);
+                } catch (IllegalArgumentException e) {
+                    System.err.println("Warning: skip invalid employee CSV row: " + e.getMessage());
+                }
             }
         } catch (IOException e) {
             System.err.println("Error reading employees: " + e.getMessage());
         }
         return list;
+    }
+
+    private boolean isHeaderLine(String line, String firstColumnName) {
+        String[] parts = line.split(",", -1);
+        return parts.length > 0 && parts[0].trim().equalsIgnoreCase(firstColumnName);
     }
 
     public void saveAll(List<Employee> list) {

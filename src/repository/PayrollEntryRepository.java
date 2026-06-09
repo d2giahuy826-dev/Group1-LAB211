@@ -28,10 +28,15 @@ public class PayrollEntryRepository {
 
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
+                if (isHeaderLine(line, "entryId")) continue;
 
-                PayrollEntry entry = new PayrollEntry();
-                entry.fromCsvLine(line);
-                entries.add(entry);
+                try {
+                    PayrollEntry entry = new PayrollEntry();
+                    entry.fromCsvLine(line);
+                    entries.add(entry);
+                } catch (IllegalArgumentException e) {
+                    System.err.println("Warning: skip invalid payroll CSV row: " + e.getMessage());
+                }
             }
 
         } catch (IOException e) {
@@ -39,6 +44,11 @@ public class PayrollEntryRepository {
         }
 
         return entries;
+    }
+
+    private boolean isHeaderLine(String line, String firstColumnName) {
+        String[] parts = line.split(",", -1);
+        return parts.length > 0 && parts[0].trim().equalsIgnoreCase(firstColumnName);
     }
 
     public PayrollEntry findById(String id) {
