@@ -12,15 +12,15 @@ import java.util.*;
  * Sinh dữ liệu giả cho 7 file CSV của hệ thống Payroll.
  *
  * Thứ tự sinh (theo FK dependency):
- *   1. departments.csv       (≥ 20 dòng)
- *   2. employees.csv         (≥ 1,000 dòng)
+ *   1. departments.csv       (≥ 20 dong)
+ *   2. employees.csv         (≥ 1,000 dong)
  *   3. leave_balances.csv    (= số employees, version = 0)
- *   4. leave_requests.csv    (≥ 4,000 dòng)
- *   5. attendance.csv        (≥ 12,000 dòng — 12 tháng × employees)
- *   6. payroll_entries.csv   (≥ 12,000 dòng — 12 tháng × employees)
- *   7. payroll_runs.csv      (≥ 12 dòng — 1 run/tháng)
+ *   4. leave_requests.csv    (≥ 4,000 dong)
+ *   5. attendance.csv        (≥ 12,000 dong — 12 tháng × employees)
+ *   6. payroll_entries.csv   (≥ 12,000 dong — 12 tháng × employees)
+ *   7. payroll_runs.csv      (≥ 12 dong — 1 run/tháng)
  *
- * Tổng ≥ 29,000 dòng.
+ * Tổng ≥ 29,000 dong.
  * Usage: java data.DataGenerator [output_dir]
  */
 public class DataGenerator {
@@ -121,10 +121,9 @@ public class DataGenerator {
             String id = String.format("EMP%04d", i + 1);
             ids.add(id);
 
-            String name = removeDiacritics(
-                    LAST_NAMES[RNG.nextInt(LAST_NAMES.length)]
-                    + " " + FIRST_NAMES[RNG.nextInt(FIRST_NAMES.length)]
-            );
+            String name = LAST_NAMES[RNG.nextInt(LAST_NAMES.length)]
+                        + " " + FIRST_NAMES[RNG.nextInt(FIRST_NAMES.length)];
+            name = removeAccents(name);
             String deptId  = deptIds.get(i % deptIds.size());
             String type    = EMP_TYPES[RNG.nextInt(EMP_TYPES.length)];
             double base    = type.equals("FULLTIME")
@@ -144,13 +143,6 @@ public class DataGenerator {
         }
         writeCsv("employees.csv", rows);
         return ids;
-    }
-
-    static String removeDiacritics(String input) {
-        if (input == null) return null;
-        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
-        String withoutAccents = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
-        return withoutAccents.replace("Đ", "D").replace("đ", "d");
     }
 
     // ─── 3. leave_balances.csv ───────────────────────────────────────────────
@@ -354,5 +346,11 @@ public class DataGenerator {
             }
         }
         return sb.toString();
+    }
+
+    static String removeAccents(String input) {
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+        String stripped = normalized.replaceAll("\\p{M}", "");
+        return stripped.replace("Đ", "D").replace("đ", "d");
     }
 }
