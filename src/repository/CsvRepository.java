@@ -313,7 +313,7 @@ public boolean update(T entity) {
 // ─── DELETE ─────────────────────────────────────────────────────
 
 public boolean delete(String id) {
-    if (id == null || id.isBlank()) {
+    if (id == null || id.trim().isEmpty()) {
         return false;
     }
 
