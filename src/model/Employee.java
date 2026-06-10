@@ -133,9 +133,11 @@ public class Employee extends BaseEntity {
     }
 
     @Override
-    public String toString() {
-        return "Employee{id='" + id + "', fullName='" + fullName +
-               "', deptId='" + deptId + "', empType=" + empType +
-               ", baseSalary=" + baseSalary + ", status=" + status + "}";
-    }
+public String toString() {
+    return "Employee{id='" + id + "', fullName='" + fullName +
+           "', deptId='" + deptId + "', empType=" + empType +
+           ", baseSalary=" + (long) baseSalary +
+           ", status=" + status + "}";
+
+}
 }

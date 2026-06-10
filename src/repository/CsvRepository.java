@@ -272,4 +272,68 @@ public abstract class CsvRepository<T extends BaseEntity> {
     public boolean fileExists() {
         return Files.exists(Paths.get(getFilePath()));
     }
+// ─── CREATE ─────────────────────────────────────────────────────
+
+public void add(T entity) {
+    if (entity == null) {
+        throw new IllegalArgumentException("Entity cannot be null.");
+    }
+
+    List<T> all = loadAll();
+
+    if (findById(entity.getId()).isPresent()) {
+        throw new IllegalArgumentException(
+            "Entity với ID " + entity.getId() + " đã tồn tại.");
+    }
+
+    all.add(entity);
+    saveAll(all);
+}
+
+// ─── UPDATE ─────────────────────────────────────────────────────
+
+public boolean update(T entity) {
+    if (entity == null) {
+        return false;
+    }
+
+    List<T> all = loadAll();
+
+    for (int i = 0; i < all.size(); i++) {
+        if (all.get(i).getId().equals(entity.getId())) {
+            all.set(i, entity);
+            saveAll(all);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// ─── DELETE ─────────────────────────────────────────────────────
+
+public boolean delete(String id) {
+    if (id == null || id.isBlank()) {
+        return false;
+    }
+
+    List<T> all = loadAll();
+
+    boolean removed = all.removeIf(
+        e -> id.trim().equals(e.getId())
+    );
+
+    if (removed) {
+        saveAll(all);
+    }
+
+    return removed;
+}
+
+// ─── EXISTS ─────────────────────────────────────────────────────
+
+public boolean existsById(String id) {
+    return findById(id).isPresent();
+}
+
 }
