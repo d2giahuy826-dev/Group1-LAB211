@@ -1,39 +1,85 @@
 package test;
 
-import model.Employee;
+import model.*;
 import repository.EmployeeRepository;
+
+import java.time.LocalDate;
+import java.util.Scanner;
 
 public class EmployeeRepositoryTest {
 
-    public static void main(String[] args) {
 
-        EmployeeRepository repo = new EmployeeRepository();
+public static void main(String[] args) {
 
-        System.out.println("===== CREATE =====");
+    Scanner sc = new Scanner(System.in);
+    EmployeeRepository repo = new EmployeeRepository();
 
-        Employee emp = new Employee();
-        emp.setId("EMP9999");
-        emp.setFullName("Test User");
+    // ===== CREATE =====
+    System.out.println("===== CREATE EMPLOYEE =====");
 
-        repo.add(emp);
+    System.out.print("Employee ID: ");
+    String id = sc.nextLine();
 
-        System.out.println(repo.findById("EMP9999"));
+    System.out.print("Full Name: ");
+    String name = sc.nextLine();
 
-        System.out.println("===== UPDATE =====");
+    System.out.print("Department ID: ");
+    String deptId = sc.nextLine();
 
-        emp.setFullName("Updated User");
+    System.out.print("Base Salary: ");
+    double salary = Double.parseDouble(sc.nextLine());
 
-        repo.update(emp);
+    Employee emp = new Employee(
+            id,
+            name,
+            deptId,
+            EmpType.FULLTIME,
+            salary,
+            0.1,
+            LocalDate.now(),
+            EmployeeStatus.ACTIVE
+    );
 
-        System.out.println(repo.findById("EMP9999"));
+    repo.add(emp);
 
-        System.out.println("===== DELETE =====");
+    System.out.println("\nEmployee added successfully!");
+    System.out.println(repo.findById(id));
 
-        repo.delete("EMP9999");
+    // ===== UPDATE =====
+    System.out.println("\n===== UPDATE EMPLOYEE =====");
 
-        System.out.println(repo.findById("EMP9999"));
+    System.out.print("New Full Name: ");
+    String newName = sc.nextLine();
 
-        System.out.println("===== COUNT =====");
-        System.out.println(repo.count());
+    emp.setFullName(newName);
+
+    if (repo.update(emp)) {
+        System.out.println("Update successful!");
     }
+
+    System.out.println(repo.findById(id));
+
+    // ===== DELETE =====
+    System.out.println("\n===== DELETE EMPLOYEE =====");
+
+    System.out.print("Delete this employee? (Y/N): ");
+    String confirm = sc.nextLine();
+
+    if (confirm.equalsIgnoreCase("Y")) {
+
+        if (repo.delete(id)) {
+            System.out.println("Delete successful!");
+        }
+
+        System.out.println(repo.findById(id));
+    }
+
+    // ===== COUNT =====
+    System.out.println("\n===== TOTAL RECORDS =====");
+    System.out.println(repo.count());
+
+    sc.close();
+}
+
+
 }

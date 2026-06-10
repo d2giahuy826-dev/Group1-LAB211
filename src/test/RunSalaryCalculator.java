@@ -13,7 +13,7 @@ public class RunSalaryCalculator {
         EmployeeRepository empRepo = new EmployeeRepository();
         PayrollEntryRepository payrollRepo = new PayrollEntryRepository("data/payroll_entries.csv");
 
-        List<Employee> employees = empRepo.getAll();
+        List<Employee> employees = empRepo.loadAll();
         if (employees.isEmpty()) {
             System.out.println("[ERROR] Khong co nhan vien trong he thong!");
             return;
