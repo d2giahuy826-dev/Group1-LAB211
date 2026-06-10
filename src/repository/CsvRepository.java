@@ -136,7 +136,7 @@ public abstract class CsvRepository<T extends BaseEntity> {
 
                 // Ghi header
                 String header = getHeader();
-                if (header != null && !header.isBlank()) {
+                if (header != null && !header.trim().isEmpty()) {
                     writer.write(header);
                     writer.newLine();
                 }
@@ -171,7 +171,7 @@ public abstract class CsvRepository<T extends BaseEntity> {
      * @return Optional chứa entity nếu tìm thấy, Optional.empty() nếu không
      */
     public Optional<T> findById(String id) {
-        if (id == null || id.isBlank()) {
+        if (id == null || id.trim().isEmpty()) {
             return Optional.empty();
         }
 

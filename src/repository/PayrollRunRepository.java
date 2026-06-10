@@ -2,7 +2,6 @@ package repository;
 
 import model.PayrollRun;
 import model.RunStatus;
-import exception.CsvParseException;
 
 import java.util.List;
 import java.util.Optional;
@@ -58,18 +57,34 @@ public class PayrollRunRepository extends CsvRepository<PayrollRun> {
      *   "id" / "runId"  → so khớp ID (kế thừa từ base)
      */
     @Override
-    protected boolean matchesField(PayrollRun run, String fieldName, String value) {
-        if (value == null) return false;
-        return switch (fieldName.toLowerCase()) {
-            case "id", "runid"      -> value.equals(run.getId());
-            case "status"           -> value.equalsIgnoreCase(run.getStatus().name());
-            case "month"            -> value.equals(String.valueOf(run.getMonth()));
-            case "year"             -> value.equals(String.valueOf(run.getYear()));
-            case "triggeredby"      -> value.equalsIgnoreCase(run.getTriggeredBy());
-            default -> throw new UnsupportedOperationException(
-                "Field '" + fieldName + "' không được hỗ trợ trong PayrollRunRepository.");
-        };
+protected boolean matchesField(PayrollRun run, String fieldName, String value) {
+    if (value == null || fieldName == null) {
+        return false;
     }
+
+    switch (fieldName.toLowerCase()) {
+        case "id":
+        case "runid":
+            return value.equals(run.getId());
+
+        case "status":
+            return value.equalsIgnoreCase(run.getStatus().name());
+
+        case "month":
+            return value.equals(String.valueOf(run.getMonth()));
+
+        case "year":
+            return value.equals(String.valueOf(run.getYear()));
+
+        case "triggeredby":
+            return value.equalsIgnoreCase(run.getTriggeredBy());
+
+        default:
+            throw new UnsupportedOperationException(
+                "Field '" + fieldName + "' is not supported in PayrollRunRepository."
+            );
+    }
+}
 
     // ─── Domain-specific query methods ───────────────────────────────────────
 

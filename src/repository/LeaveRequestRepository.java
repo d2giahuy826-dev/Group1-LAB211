@@ -61,18 +61,35 @@ public class LeaveRequestRepository extends CsvRepository<LeaveRequest> {
      *   "id" / "requestid"   → tìm theo ID đơn
      */
     @Override
-    protected boolean matchesField(LeaveRequest req, String fieldName, String value) {
-        if (value == null) return false;
-        return switch (fieldName.toLowerCase()) {
-            case "id", "requestid" -> value.equals(req.getId());
-            case "empid"           -> value.equals(req.getEmpId());
-            case "status"          -> value.equalsIgnoreCase(req.getStatus().name());
-            case "leavetype", "type" -> value.equalsIgnoreCase(req.getType().name());
-            case "approvedby"      -> value.equals(req.getApprovedBy());
-            default -> throw new UnsupportedOperationException(
-                "Field '" + fieldName + "' không được hỗ trợ trong LeaveRequestRepository.");
-        };
+protected boolean matchesField(LeaveRequest req, String fieldName, String value) {
+    if (value == null || fieldName == null) {
+        return false;
     }
+
+    switch (fieldName.toLowerCase()) {
+        case "id":
+        case "requestid":
+            return value.equals(req.getId());
+
+        case "empid":
+            return value.equals(req.getEmpId());
+
+        case "status":
+            return value.equalsIgnoreCase(req.getStatus().name());
+
+        case "leavetype":
+        case "type":
+            return value.equalsIgnoreCase(req.getType().name());
+
+        case "approvedby":
+            return value.equals(req.getApprovedBy());
+
+        default:
+            throw new UnsupportedOperationException(
+                "Field '" + fieldName + "' is not supported in LeaveRequestRepository."
+            );
+    }
+}
 
     // ─── Domain-specific query methods ───────────────────────────────────────
 

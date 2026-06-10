@@ -22,7 +22,7 @@ public enum RunStatus {
      * Parse chuỗi từ CSV (không phân biệt hoa/thường).
      */
     public static RunStatus fromString(String value) {
-        if (value == null || value.isBlank()) {
+        if (value == null || value.trim().isEmpty()) {
             throw new IllegalArgumentException("RunStatus cannot be null or blank.");
         }
         return RunStatus.valueOf(value.trim().toUpperCase());
