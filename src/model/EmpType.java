@@ -14,12 +14,9 @@ public enum EmpType {
     /**
      * Trả về tax rate mặc định theo loại nhân viên.
      */
-    public double getDefaultTaxRate() {
-        return this == FULLTIME
-                ? SalaryCalculator.DEFAULT_FULLTIME_TAX_RATE
-                : SalaryCalculator.DEFAULT_PARTTIME_TAX_RATE;
-    }
-
+   public double getDefaultTaxRate() {
+    return this == FULLTIME ? 0.10 : 0.05;
+}
     /**
      * Parse chuỗi từ CSV (không phân biệt hoa/thường).
      * Ném IllegalArgumentException nếu không hợp lệ.

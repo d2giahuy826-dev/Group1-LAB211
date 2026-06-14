@@ -19,22 +19,16 @@ public class SalaryCalculator {
 
     // ─── Hằng số lương ────────────────────────────────────────────────
     /** Số ngày công chuẩn mỗi tháng */
-    public static final int STANDARD_WORK_DAYS = 22;
+    public final int STANDARD_WORK_DAYS = 22;
 
     /** Số giờ làm việc mỗi ngày */
-    public static final int HOURS_PER_DAY = 8;
+    public final int HOURS_PER_DAY = 8;
 
     /** Hệ số lương làm thêm giờ (overtime) */
-    public static final double OT_MULTIPLIER = 1.5;
+    public final double OT_MULTIPLIER = 1.5;
 
     /** Tỷ lệ thưởng đi đủ ngày (attendance bonus) */
-    public static final double BONUS_RATE = 0.05;
-
-    /** Thuế FULLTIME mặc định */
-    public static final double DEFAULT_FULLTIME_TAX_RATE = 0.10;
-
-    /** Thuế PARTTIME mặc định */
-    public static final double DEFAULT_PARTTIME_TAX_RATE = 0.05;
+    public final double BONUS_RATE = 0.05;
 
     // ─── Input fields ─────────────────────────────────────────────────
     private double baseSalary;
@@ -77,22 +71,12 @@ public class SalaryCalculator {
     /**
      * Tạo calculator cho nhân viên FULLTIME (taxRate = 10%).
      */
-    public static SalaryCalculator forFulltime(double baseSalary,
-                                               int overtimeHours,
-                                               int absenceDays) {
-        return new SalaryCalculator(baseSalary, overtimeHours,
-                                    absenceDays, DEFAULT_FULLTIME_TAX_RATE);
-    }
+    
 
     /**
      * Tạo calculator cho nhân viên PARTTIME (taxRate = 5%).
      */
-    public static SalaryCalculator forParttime(double baseSalary,
-                                               int overtimeHours,
-                                               int absenceDays) {
-        return new SalaryCalculator(baseSalary, overtimeHours,
-                                    absenceDays, DEFAULT_PARTTIME_TAX_RATE);
-    }
+   
 
     // ─── Core calculation ─────────────────────────────────────────────
 

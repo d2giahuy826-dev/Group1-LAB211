@@ -5,10 +5,14 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 public class RunSalaryCalculator {
-    private static final DecimalFormat df = new DecimalFormat("#,###");
-    private static final Scanner scanner = new Scanner(System.in);
+    private final DecimalFormat df = new DecimalFormat("#,###");
+    private final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
+        new RunSalaryCalculator().run();
+    }
+
+    public void run() {
         // 1. Load repositories
         EmployeeRepository empRepo = new EmployeeRepository();
         PayrollEntryRepository payrollRepo = new PayrollEntryRepository("data/payroll_entries.csv");
@@ -102,7 +106,7 @@ public class RunSalaryCalculator {
         }
     }
 
-    private static Employee selectEmployee(List<Employee> employees) {
+    private Employee selectEmployee(List<Employee> employees) {
         while (true) {
             System.out.println("\n=======================================");
             System.out.print("Nhap so thu tu nhan vien (hoac nhap ID): ");
@@ -134,7 +138,7 @@ public class RunSalaryCalculator {
         }
     }
 
-    private static int selectMonth(List<AttendanceRecord> attendanceRecords) {
+    private int selectMonth(List<AttendanceRecord> attendanceRecords) {
         while (true) {
             System.out.println("\n---------------------------------------");
             System.out.println("Chon thang de tinh luong hoac nhap 0 de tinh trung binh ca nam");
@@ -155,10 +159,10 @@ public class RunSalaryCalculator {
         }
     }
 
-    private static void showMonthlySalary(Employee selected, AttendanceRecord attendance) {
+    private void showMonthlySalary(Employee selected, AttendanceRecord attendance) {
         SalaryCalculator calc = selected.getEmpType() == EmpType.FULLTIME
-                ? SalaryCalculator.forFulltime(selected.getBaseSalary(), attendance.getOvertimeHours(), attendance.getAbsenceDays())
-                : SalaryCalculator.forParttime(selected.getBaseSalary(), attendance.getOvertimeHours(), attendance.getAbsenceDays());
+                ? new SalaryCalculator(selected.getBaseSalary(), attendance.getOvertimeHours(), attendance.getAbsenceDays(), 0.10)
+                : new SalaryCalculator(selected.getBaseSalary(), attendance.getOvertimeHours(), attendance.getAbsenceDays(), 0.05);
         calc.calculate();
 
         System.out.println("\n=======================================");
@@ -177,7 +181,7 @@ public class RunSalaryCalculator {
         System.out.println("=======================================");
     }
 
-    private static void showAnnualAverage(Employee selected, List<AttendanceRecord> attendanceRecords) {
+    private void showAnnualAverage(Employee selected, List<AttendanceRecord> attendanceRecords) {
         if (attendanceRecords.isEmpty()) {
             System.out.println("\n[WARN] Khong the tinh trung binh nam vi khong co du lieu cham cong.");
             return;
@@ -187,8 +191,8 @@ public class RunSalaryCalculator {
         int count = 0;
         for (AttendanceRecord record : attendanceRecords) {
             SalaryCalculator calc = selected.getEmpType() == EmpType.FULLTIME
-                    ? SalaryCalculator.forFulltime(selected.getBaseSalary(), record.getOvertimeHours(), record.getAbsenceDays())
-                    : SalaryCalculator.forParttime(selected.getBaseSalary(), record.getOvertimeHours(), record.getAbsenceDays());
+                    ? new SalaryCalculator(selected.getBaseSalary(), record.getOvertimeHours(), record.getAbsenceDays(), 0.10)
+                    : new SalaryCalculator(selected.getBaseSalary(), record.getOvertimeHours(), record.getAbsenceDays(), 0.05);
             calc.calculate();
             totalNet += calc.getNetSalary();
             count++;
@@ -206,11 +210,11 @@ public class RunSalaryCalculator {
         System.out.println("=======================================\n");
     }
 
-    private static String formatMoney(double value) {
+    private String formatMoney(double value) {
         return df.format(Math.round(value));
     }
 
-    private static int getIntInput() {
+    private int getIntInput() {
         try {
             return Integer.parseInt(scanner.nextLine().trim());
         } catch (NumberFormatException e) {
