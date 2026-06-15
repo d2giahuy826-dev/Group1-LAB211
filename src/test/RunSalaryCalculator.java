@@ -1,225 +1,147 @@
 package test;
-import model.*;
-import repository.*;
-import java.text.DecimalFormat;
-import java.util.*;
+
+
+import model.SalaryCalculator;
 
 public class RunSalaryCalculator {
-    private final DecimalFormat df = new DecimalFormat("#,###");
-    private final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        new RunSalaryCalculator().run();
+
+        RunSalaryCalculator test = new RunSalaryCalculator();
+
+        System.out.println("==============================================");
+        System.out.println("     SALARY CALCULATOR TEST  LAB211");
+        System.out.println("==============================================");
+
+        test.testFulltime_DuNgay_CoOT();
+        test.testParttime_DuNgay_KhongOT();
+        test.testNghiKhongPhep_MatBonus();
+        test.testNghi22Ngay_NetBang0();
+        test.testChuaCalculate_NemException();
+
+        System.out.println("==============================================");
     }
 
-    public void run() {
-        // 1. Load repositories
-        EmployeeRepository empRepo = new EmployeeRepository();
-        PayrollEntryRepository payrollRepo = new PayrollEntryRepository("data/payroll_entries.csv");
+    // ─── TC01: FULLTIME, di du ngay, co OT ───────────────────────────────────
+    void testFulltime_DuNgay_CoOT() {
 
-        List<Employee> employees = empRepo.loadAll();
-        if (employees.isEmpty()) {
-            System.out.println("[ERROR] Khong co nhan vien trong he thong!");
-            return;
-        }
+        System.out.println("\n[TC01] FULLTIME | Du ngay | OT 10 gio | Base 12,000,000");
 
-        // 2. Display list of employees
-        System.out.println("\n=======================================");
-        System.out.println("      DANH SACH NHAN VIEN");
-        System.out.println("=======================================");
-        for (int i = 0; i < employees.size(); i++) {
-            Employee emp = employees.get(i);
-            System.out.printf("%d. [%s] %s - %s - Base: %s VND%n",
-                    i + 1,
-                    emp.getId(),
-                    emp.getFullName(),
-                    emp.getEmpType(),
-                    df.format((long) emp.getBaseSalary())
-            );
-        }
-
-        // 3. User select employee
-        Employee selected = selectEmployee(employees);
-        System.out.printf("\n[OK] Chon nhan vien: %s (%s)%n", selected.getFullName(), selected.getId());
-
-        // 4. Display payroll history of this employee
-        List<PayrollEntry> empPayrolls = new ArrayList<>();
-        List<PayrollEntry> allPayrolls = payrollRepo.findAll();
-        for (PayrollEntry p : allPayrolls) {
-            if (p.getEmpId().equals(selected.getId())) {
-                empPayrolls.add(p);
-            }
-        }
-
-        if (!empPayrolls.isEmpty()) {
-            System.out.println("\n=======================================");
-            System.out.println("      LICH SU LUONG");
-            System.out.println("=======================================");
-            for (int i = 0; i < empPayrolls.size(); i++) {
-                PayrollEntry p = empPayrolls.get(i);
-                System.out.printf("%d. Thang %d/%d - Net: %s VND - Status: %s%n",
-                        i + 1,
-                        p.getMonth(),
-                        p.getYear(),
-                        df.format(p.getNetSalary()),
-                        p.getStatus()
-                );
-            }
-        }
-
-        AttendanceRepository attendanceRepo = new AttendanceRepository();
-        List<AttendanceRecord> attendanceRecords = attendanceRepo.findByEmployeeId(selected.getId());
-
-        if (!attendanceRecords.isEmpty()) {
-            System.out.println("\n=======================================");
-            System.out.println("      LICH SU CHAM CONG");
-            System.out.println("=======================================");
-            for (int i = 0; i < attendanceRecords.size(); i++) {
-                AttendanceRecord record = attendanceRecords.get(i);
-                System.out.printf("%d. Thang %d/%d - WorkDays: %d - Absence: %d - OT: %d%n",
-                        i + 1,
-                        record.getMonth(),
-                        record.getYear(),
-                        record.getWorkDays(),
-                        record.getAbsenceDays(),
-                        record.getOvertimeHours()
-                );
-            }
-        } else {
-            System.out.println("\n[WARN] Khong co du lieu cham cong cho nhan vien nay.");
-        }
-
-        int selectedMonth = selectMonth(attendanceRecords);
-        if (selectedMonth == 0) {
-            showAnnualAverage(selected, attendanceRecords);
-        } else {
-            AttendanceRecord attendance = attendanceRecords.stream()
-                    .filter(r -> r.getMonth() == selectedMonth)
-                    .findFirst()
-                    .orElse(null);
-            if (attendance != null) {
-                showMonthlySalary(selected, attendance);
-                showAnnualAverage(selected, attendanceRecords);
-            } else {
-                System.out.println("[ERROR] Khong co du lieu cham cong cho thang da chon!");
-            }
-        }
-    }
-
-    private Employee selectEmployee(List<Employee> employees) {
-        while (true) {
-            System.out.println("\n=======================================");
-            System.out.print("Nhap so thu tu nhan vien (hoac nhap ID): ");
-            String input = scanner.nextLine().trim();
-
-            if (input.isEmpty()) {
-                System.out.println("[ERROR] Vui long nhap so thu tu hoac ID cua nhan vien.");
-                continue;
-            }
-
-            Employee selected = null;
-            try {
-                int index = Integer.parseInt(input) - 1;
-                if (index >= 0 && index < employees.size()) {
-                    selected = employees.get(index);
-                }
-            } catch (NumberFormatException e) {
-                selected = employees.stream()
-                        .filter(emp -> emp.getId().equalsIgnoreCase(input))
-                        .findFirst()
-                        .orElse(null);
-            }
-
-            if (selected != null) {
-                return selected;
-            }
-
-            System.out.println("[ERROR] Khong tim thay nhan vien! Vui long thu lai.");
-        }
-    }
-
-    private int selectMonth(List<AttendanceRecord> attendanceRecords) {
-        while (true) {
-            System.out.println("\n---------------------------------------");
-            System.out.println("Chon thang de tinh luong hoac nhap 0 de tinh trung binh ca nam");
-            System.out.print("Thang (0-12): ");
-            int month = getIntInput();
-
-            if (month == 0) {
-                return 0;
-            }
-            if (month >= 1 && month <= 12) {
-                if (attendanceRecords.stream().anyMatch(r -> r.getMonth() == month)) {
-                    return month;
-                }
-                System.out.println("[ERROR] Khong co du lieu cham cong cho thang " + month + ". Vui long chon lai.");
-            } else {
-                System.out.println("[ERROR] Thang phai trong khoang 0-12. Vui long nhap lai.");
-            }
-        }
-    }
-
-    private void showMonthlySalary(Employee selected, AttendanceRecord attendance) {
-        SalaryCalculator calc = selected.getEmpType() == EmpType.FULLTIME
-                ? new SalaryCalculator(selected.getBaseSalary(), attendance.getOvertimeHours(), attendance.getAbsenceDays(), 0.10)
-                : new SalaryCalculator(selected.getBaseSalary(), attendance.getOvertimeHours(), attendance.getAbsenceDays(), 0.05);
+        // Fix: baseSalary phai la double (12_000_000.0)
+        SalaryCalculator calc = SalaryCalculator.forFulltime(12_000_000.0, 10, 0);
         calc.calculate();
 
-        System.out.println("\n=======================================");
-        System.out.println("      KET QUA TINH LUONG THANG " + attendance.getMonth() + "/" + attendance.getYear());
-        System.out.println("=======================================");
-        System.out.println("  Base salary: " + formatMoney(selected.getBaseSalary()));
-        System.out.println("  Overtime hours: " + attendance.getOvertimeHours());
-        System.out.println("  Absence days: " + attendance.getAbsenceDays());
-        System.out.println("  Overtime pay: " + formatMoney(calc.getOvertimePay()));
-        System.out.println("  Absence deduction: " + formatMoney(calc.getAbsenceDeduction()));
-        System.out.println("  Attendance bonus: " + formatMoney(calc.getAttendanceBonus()));
-        System.out.println("  Gross salary: " + formatMoney(calc.getGrossSalary()));
-        System.out.println("  Tax (" + ((long) (selected.getTaxRate() * 100)) + "%): " + formatMoney(calc.getTaxAmount()));
-        System.out.println("  Net salary: " + formatMoney(calc.getNetSalary()));
-        System.out.println("  Tong so tien nhan duoc: " + formatMoney(calc.getNetSalary()) + " VND");
-        System.out.println("=======================================");
-    }
+        // hourlyRate = 12,000,000 / 22 / 8 = 68,181.8
+        // overtimePay = round(68,181.8 * 10 * 1.5) = 1,022,727
+        // attendanceBonus = round(12,000,000 * 0.05) = 600,000
+        // gross = 12,000,000 + 1,022,727 + 600,000 = 13,622,727
+        // tax = round(13,622,727 * 0.10) = 1,362,273
+        // net = 13,622,727 - 1,362,273 = 12,260,454
 
-    private void showAnnualAverage(Employee selected, List<AttendanceRecord> attendanceRecords) {
-        if (attendanceRecords.isEmpty()) {
-            System.out.println("\n[WARN] Khong the tinh trung binh nam vi khong co du lieu cham cong.");
-            return;
+        System.out.println("  OT pay            : " + (long) calc.getOvertimePay());
+        System.out.println("  Attendance bonus  : " + (long) calc.getAttendanceBonus());
+        System.out.println("  Gross salary      : " + (long) calc.getGrossSalary());
+        System.out.println("  Net salary        : " + (long) calc.getNetSalary());
+
+        if (calc.getOvertimePay() > 0 && calc.getAttendanceBonus() > 0 && calc.getNetSalary() > 12_000_000) {
+            System.out.println("  PASS");
+        } else {
+            System.out.println("  FAIL");
         }
+    }
 
-        double totalNet = 0;
-        int count = 0;
-        for (AttendanceRecord record : attendanceRecords) {
-            SalaryCalculator calc = selected.getEmpType() == EmpType.FULLTIME
-                    ? new SalaryCalculator(selected.getBaseSalary(), record.getOvertimeHours(), record.getAbsenceDays(), 0.10)
-                    : new SalaryCalculator(selected.getBaseSalary(), record.getOvertimeHours(), record.getAbsenceDays(), 0.05);
-            calc.calculate();
-            totalNet += calc.getNetSalary();
-            count++;
+    // ─── TC02: PARTTIME, di du ngay, khong OT ────────────────────────────────
+    void testParttime_DuNgay_KhongOT() {
+
+        System.out.println("\n[TC02] PARTTIME | Du ngay | Khong OT | Base 8,000,000");
+
+        // Fix: them forParttime, baseSalary la double
+        SalaryCalculator calc = SalaryCalculator.forParttime(8_000_000.0, 0, 0);
+        calc.calculate();
+
+        // attendanceBonus = round(8,000,000 * 0.05) = 400,000
+        // gross = 8,000,000 + 400,000 = 8,400,000
+        // tax = round(8,400,000 * 0.05) = 420,000  <- PARTTIME thue 5%
+        // net = 8,400,000 - 420,000 = 7,980,000
+
+        System.out.println("  Attendance bonus  : " + (long) calc.getAttendanceBonus());
+        System.out.println("  Tax (5%)          : " + (long) calc.getTaxAmount());
+        System.out.println("  Net salary        : " + (long) calc.getNetSalary());
+
+        double expectedTax = Math.round(calc.getGrossSalary() * 0.05);
+
+        if (Math.abs(calc.getTaxAmount() - expectedTax) < 1) {
+            System.out.println("  PASS");
+        } else {
+            System.out.println("  FAIL – Tax sai, expected: " + (long) expectedTax
+                    + " but got: " + (long) calc.getTaxAmount());
         }
-
-        long averageNet = Math.round(totalNet / count);
-        long totalNetRounded = Math.round(totalNet);
-
-        System.out.println("\n=======================================");
-        System.out.println("      TRUNG BINH LUONG THEO NAM");
-        System.out.println("=======================================");
-        System.out.println("  So thang duoc tinh: " + count);
-        System.out.println("  Trung binh net moi thang: " + df.format(averageNet) + " VND");
-        System.out.println("  Tong net ca nam: " + df.format(totalNetRounded) + " VND");
-        System.out.println("=======================================\n");
     }
 
-    private String formatMoney(double value) {
-        return df.format(Math.round(value));
+    // ─── TC03: Nghi khong phep 2 ngay, mat bonus ─────────────────────────────
+    void testNghiKhongPhep_MatBonus() {
+
+        System.out.println("\n[TC03] FULLTIME | Nghi khong phep 2 ngay | Kiem tra mat bonus");
+
+        // Fix: baseSalary la double
+        SalaryCalculator calc = SalaryCalculator.forFulltime(12_000_000.0, 0, 2);
+        calc.calculate();
+
+        // absenceDeduction = round(12,000,000 / 22 * 2) = 1,090,909
+        // attendanceBonus = 0 (vi nghi > 0 ngay)
+        // gross = 12,000,000 - 1,090,909 = 10,909,091
+        // net < base
+
+        System.out.println("  Absence deduction : " + (long) calc.getAbsenceDeduction());
+        System.out.println("  Attendance bonus  : " + (long) calc.getAttendanceBonus());
+        System.out.println("  Net salary        : " + (long) calc.getNetSalary());
+
+        if (calc.getAttendanceBonus() == 0 && calc.getAbsenceDeduction() > 0 && calc.getNetSalary() < 12_000_000) {
+            System.out.println("  PASS");
+        } else {
+            System.out.println("  FAIL");
+        }
     }
 
-    private int getIntInput() {
+    // ─── TC04: Nghi dung 22 ngay, net = 0 ───────────────────────────────────
+    void testNghi22Ngay_NetBang0() {
+
+        System.out.println("\n[TC04] FULLTIME | Nghi dung 22 ngay | Net phai bang 0");
+
+        // Fix: baseSalary la double
+        SalaryCalculator calc = SalaryCalculator.forFulltime(4_000_000.0, 0, 22 );
+;
+        calc.calculate();
+
+        // absenceDeduction = 4,000,000 / 22 * 22 = 4,000,000
+        // gross = 4,000,000 - 4,000,000 = 0
+        // net = 0
+
+        System.out.println("  Absence deduction : " + (long) calc.getAbsenceDeduction());
+        System.out.println("  Gross salary      : " + (long) calc.getGrossSalary());
+        System.out.println("  Net salary        : " + (long) calc.getNetSalary());
+
+        if (calc.getGrossSalary() == 0 && calc.getNetSalary() == 0) {
+            System.out.println("  PASS");
+        } else {
+            System.out.println("  FAIL – Net khong bang 0: " + (long) calc.getNetSalary());
+        }
+    }
+
+    // ─── TC05: Chua goi calculate(), getter phai nem exception ───────────────
+    void testChuaCalculate_NemException() {
+
+        System.out.println("\n[TC05] Chua goi calculate() | Getter phai nem IllegalStateException");
+
+        // Fix: baseSalary phai la double (12_000_000.0)
+        SalaryCalculator calc = new SalaryCalculator(12_000_000.0, 0, 0, 0.10);
+
         try {
-            return Integer.parseInt(scanner.nextLine().trim());
-        } catch (NumberFormatException e) {
-            System.out.print("❌ Nhập sai! Vui lòng nhập số nguyên: ");
-            return getIntInput();
+            calc.getNetSalary();
+            System.out.println("  FAIL – Khong nem exception!");
+        } catch (IllegalStateException e) {
+            System.out.println("  Exception: " + e.getMessage());
+            System.out.println("  PASS");
         }
     }
 }

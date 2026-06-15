@@ -21,7 +21,7 @@ public enum EmpType {
      * Parse chuỗi từ CSV (không phân biệt hoa/thường).
      * Ném IllegalArgumentException nếu không hợp lệ.
      */
-    public static EmpType fromString(String value) {
+    public static  EmpType fromString(String value) {
         if (value == null || value.trim().isEmpty()) {
             throw new IllegalArgumentException("EmpType cannot be null or blank.");
         }
