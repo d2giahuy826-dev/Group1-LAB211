@@ -14,17 +14,26 @@ public enum EmpType {
     /**
      * Trả về tax rate mặc định theo loại nhân viên.
      */
-   public double getDefaultTaxRate() {
-    return this == FULLTIME ? 0.10 : 0.05;
-}
-    /**
+    public double getDefaultTaxRate() {
+        return this == FULLTIME ? 0.10 : 0.05;
+    }
+
+    /**chuyển một chuỗi (String) thành giá trị enum
      * Parse chuỗi từ CSV (không phân biệt hoa/thường).
-     * Ném IllegalArgumentException nếu không hợp lệ.
      */
-    public static EmpType fromString(String value) {
+    public EmpType fromString(String value) {
         if (value == null || value.trim().isEmpty()) {
             throw new IllegalArgumentException("EmpType cannot be null or blank.");
         }
-        return EmpType.valueOf(value.trim().toUpperCase());
+
+        String input = value.trim().toUpperCase();
+
+        for (EmpType type : EmpType.values()) {
+            if (type.name().equals(input)) {
+                return type;
+            }
+        }
+
+        throw new IllegalArgumentException("Invalid EmpType: " + value);
     }
 }
