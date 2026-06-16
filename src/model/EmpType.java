@@ -21,7 +21,11 @@ public enum EmpType {
     /**chuyển một chuỗi (String) thành giá trị enum
      * Parse chuỗi từ CSV (không phân biệt hoa/thường).
      */
+<<<<<<< HEAD
     public EmpType fromString(String value) {
+=======
+    public static  EmpType fromString(String value) {
+>>>>>>> de1db2143cdf7842a837c9959ebb7e660b1d0355
         if (value == null || value.trim().isEmpty()) {
             throw new IllegalArgumentException("EmpType cannot be null or blank.");
         }
