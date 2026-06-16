@@ -1,31 +1,14 @@
 package model;
 
-/**
- * SalaryCalculator – Model class chứa toàn bộ logic tính lương.
- *
- * Theo rubric LAB211: logic tính lương phải nằm trong Model,
- * KHÔNG được đặt ở Controller/View.
- *
- * Công thức:
- *   overtimePay       = baseSalary / STANDARD_WORK_DAYS / HOURS_PER_DAY
- *                       × overtimeHours × OT_MULTIPLIER (1.5)
- *   absenceDeduction  = baseSalary / STANDARD_WORK_DAYS × absenceDays
- *   attendanceBonus   = 500,000 nếu absenceDays == 0 (đi đủ ngày)
- *   grossSalary       = baseSalary + overtimePay − absenceDeduction + bonus
- *   taxAmount         = grossSalary × taxRate
- *   netSalary         = grossSalary − taxAmount
- */
 public class SalaryCalculator {
 
     // ─── Hằng số lương ────────────────────────────────────────────────
-    // Fix: them static de co the goi SalaryCalculator.STANDARD_WORK_DAYS
-    // va de forFulltime / forParttime dung duoc
-    public static final int    STANDARD_WORK_DAYS       = 22;
-    public static final int    HOURS_PER_DAY            = 8;
-    public static final double OT_MULTIPLIER            = 1.5;
-    public static final double ATTENDANCE_BONUS         = 500_000;  // 500k thay vì 5%
-    public static final double DEFAULT_FULLTIME_TAX_RATE = 0.10;
-    public static final double DEFAULT_PARTTIME_TAX_RATE = 0.05;
+    public final int    STANDARD_WORK_DAYS        = 22;
+    public final int    HOURS_PER_DAY             = 8;
+    public final double OT_MULTIPLIER             = 1.5;
+    public final double ATTENDANCE_BONUS_RATE     = 0.05;
+    public final double DEFAULT_FULLTIME_TAX_RATE = 0.10;
+    public final double DEFAULT_PARTTIME_TAX_RATE = 0.05;
 
     // ─── Input fields ─────────────────────────────────────────────────
     private double baseSalary;
@@ -33,7 +16,7 @@ public class SalaryCalculator {
     private int    absenceDays;
     private double taxRate;
 
-    // ─── Computed results (cache sau khi calculate()) ─────────────────
+    // ─── Computed results ─────────────────────────────────────────────
     private double  overtimePay;
     private double  absenceDeduction;
     private double  attendanceBonus;
@@ -47,9 +30,6 @@ public class SalaryCalculator {
     public SalaryCalculator() {
     }
 
-    /**
-     * Constructor đầy đủ tham số (dùng taxRate trực tiếp).
-     */
     public SalaryCalculator(double baseSalary, int overtimeHours,
                             int absenceDays, double taxRate) {
         setBaseSalary(baseSalary);
@@ -58,9 +38,6 @@ public class SalaryCalculator {
         setTaxRate(taxRate);
     }
 
-    /**
-     * Constructor nhận EmpType – tự xác định taxRate theo loại nhân viên.
-     */
     public SalaryCalculator(double baseSalary, int overtimeHours,
                             int absenceDays, EmpType type) {
         setBaseSalary(baseSalary);
@@ -71,60 +48,48 @@ public class SalaryCalculator {
                 : DEFAULT_PARTTIME_TAX_RATE);
     }
 
-    // ─── Factory methods tiện dụng ────────────────────────────────────
+    // ─── Factory methods ──────────────────────────────────────────────
 
-    /**
-     * Tạo calculator cho nhân viên FULLTIME (taxRate = 10%).
-     */
     public static SalaryCalculator forFulltime(double baseSalary,
                                                int overtimeHours,
                                                int absenceDays) {
         return new SalaryCalculator(baseSalary, overtimeHours,
-                                    absenceDays, DEFAULT_FULLTIME_TAX_RATE);
+                                    absenceDays, 0.10);
     }
 
-    /**
-     * Tạo calculator cho nhân viên PARTTIME (taxRate = 5%).
-     */
     public static SalaryCalculator forParttime(double baseSalary,
                                                int overtimeHours,
                                                int absenceDays) {
         return new SalaryCalculator(baseSalary, overtimeHours,
-                                    absenceDays, DEFAULT_PARTTIME_TAX_RATE);
+                                    absenceDays, 0.05);
     }
 
     // ─── Core calculation ─────────────────────────────────────────────
 
-    /**
-     * Thực hiện tính toán toàn bộ các thành phần lương.
-     * Gọi method này trước khi truy cập kết quả.
-     *
-     * @return this (fluent API)
-     */
     public SalaryCalculator calculate() {
-        // 1. Overtime pay = (baseSalary / 22 / 8) × otHours × 1.5
+        // 1. Overtime pay
         double dailyRate  = baseSalary / STANDARD_WORK_DAYS;
         double hourlyRate = dailyRate / HOURS_PER_DAY;
-        this.overtimePay = Math.round(hourlyRate * overtimeHours * OT_MULTIPLIER);
+        overtimePay = Math.round(hourlyRate * overtimeHours * OT_MULTIPLIER);
 
-        // 2. Absence deduction = (baseSalary / 22) × absenceDays
-        this.absenceDeduction = Math.round(dailyRate * absenceDays);
+        // 2. Absence deduction
+        absenceDeduction = Math.round(dailyRate * absenceDays);
 
-        // 3. Attendance bonus = 500,000 nếu đi đủ ngày (absence == 0)
-        this.attendanceBonus = (absenceDays == 0)
-                ? ATTENDANCE_BONUS
+        // 3. Attendance bonus = 5% base nếu đi đủ ngày
+        attendanceBonus = (absenceDays == 0)
+                ? Math.round(baseSalary * ATTENDANCE_BONUS_RATE)
                 : 0;
 
         // 4. Gross = base + OT − absence + bonus
-        this.grossSalary = baseSalary + overtimePay - absenceDeduction + attendanceBonus;
+        grossSalary = baseSalary + overtimePay - absenceDeduction + attendanceBonus;
 
-        // 5. Tax = gross × taxRate
-        this.taxAmount = Math.round(grossSalary * taxRate);
+        // 5. Tax
+        taxAmount = Math.round(grossSalary * taxRate);
 
-        // 6. Net = gross − tax
-        this.netSalary = grossSalary - taxAmount;
+        // 6. Net
+        netSalary = grossSalary - taxAmount;
 
-        this.calculated = true;
+        calculated = true;
         return this;
     }
 
@@ -168,7 +133,7 @@ public class SalaryCalculator {
         if (baseSalary < 0)
             throw new IllegalArgumentException("Base salary must not be negative.");
         this.baseSalary = baseSalary;
-        this.calculated = false;
+        calculated = false;
     }
 
     public int getOvertimeHours() { return overtimeHours; }
@@ -177,7 +142,7 @@ public class SalaryCalculator {
         if (overtimeHours < 0)
             throw new IllegalArgumentException("Overtime hours must not be negative.");
         this.overtimeHours = overtimeHours;
-        this.calculated = false;
+        calculated = false;
     }
 
     public int getAbsenceDays() { return absenceDays; }
@@ -186,7 +151,7 @@ public class SalaryCalculator {
         if (absenceDays < 0)
             throw new IllegalArgumentException("Absence days must not be negative.");
         this.absenceDays = absenceDays;
-        this.calculated = false;
+        calculated = false;
     }
 
     public double getTaxRate() { return taxRate; }
@@ -195,7 +160,7 @@ public class SalaryCalculator {
         if (taxRate < 0 || taxRate > 1)
             throw new IllegalArgumentException("Tax rate must be between 0 and 1.");
         this.taxRate = taxRate;
-        this.calculated = false;
+        calculated = false;
     }
 
     // ─── Helper ───────────────────────────────────────────────────────
