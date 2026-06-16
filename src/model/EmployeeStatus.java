@@ -21,7 +21,7 @@ public enum EmployeeStatus {
     /**
      * Parse chuỗi từ CSV (không phân biệt hoa/thường).
      */
-    public static EmployeeStatus fromString(String value) {
+    public EmployeeStatus fromString(String value) {
         if (value == null || value.trim().isEmpty()) {
             throw new IllegalArgumentException("EmployeeStatus cannot be null or blank.");
         }

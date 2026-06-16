@@ -73,11 +73,11 @@ public class Employee extends BaseEntity {
         setId(parts[0].trim());
         setFullName(parts[1].trim());
         setDeptId(parts[2].trim());
-        setEmpType(EmpType.fromString(parts[3].trim()));
+        setEmpType(EmpType.FULLTIME.fromString(parts[3].trim()));
         setBaseSalary(Double.parseDouble(parts[4].trim()));
         setTaxRate(Double.parseDouble(parts[5].trim()));
         setJoinDate(LocalDate.parse(parts[6].trim()));
-        setStatus(EmployeeStatus.fromString(parts[7].trim()));
+        setStatus(EmployeeStatus.ACTIVE.fromString(parts[7].trim()));
     }
 
     // ─── Getters / Setters ────────────────────────────────────────────────────

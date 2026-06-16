@@ -10,7 +10,7 @@ package model;
  *   overtimePay       = baseSalary / STANDARD_WORK_DAYS / HOURS_PER_DAY
  *                       × overtimeHours × OT_MULTIPLIER (1.5)
  *   absenceDeduction  = baseSalary / STANDARD_WORK_DAYS × absenceDays
- *   attendanceBonus   = baseSalary × BONUS_RATE (5%) nếu absenceDays == 0
+ *   attendanceBonus   = 500,000 nếu absenceDays == 0 (đi đủ ngày)
  *   grossSalary       = baseSalary + overtimePay − absenceDeduction + bonus
  *   taxAmount         = grossSalary × taxRate
  *   netSalary         = grossSalary − taxAmount
@@ -23,7 +23,7 @@ public class SalaryCalculator {
     public static final int    STANDARD_WORK_DAYS       = 22;
     public static final int    HOURS_PER_DAY            = 8;
     public static final double OT_MULTIPLIER            = 1.5;
-    public static final double BONUS_RATE               = 0.05;
+    public static final double ATTENDANCE_BONUS         = 500_000;  // 500k thay vì 5%
     public static final double DEFAULT_FULLTIME_TAX_RATE = 0.10;
     public static final double DEFAULT_PARTTIME_TAX_RATE = 0.05;
 
@@ -110,9 +110,9 @@ public class SalaryCalculator {
         // 2. Absence deduction = (baseSalary / 22) × absenceDays
         this.absenceDeduction = Math.round(dailyRate * absenceDays);
 
-        // 3. Attendance bonus = baseSalary × 5% nếu đi đủ ngày (absence == 0)
+        // 3. Attendance bonus = 500,000 nếu đi đủ ngày (absence == 0)
         this.attendanceBonus = (absenceDays == 0)
-                ? Math.round(baseSalary * BONUS_RATE)
+                ? ATTENDANCE_BONUS
                 : 0;
 
         // 4. Gross = base + OT − absence + bonus

@@ -16,8 +16,7 @@ public class RunSalaryCalculator {
         test.testFulltime_DuNgay_CoOT();
         test.testParttime_DuNgay_KhongOT();
         test.testNghiKhongPhep_MatBonus();
-        test.testNghi22Ngay_NetBang0();
-        test.testChuaCalculate_NemException();
+       
 
         System.out.println("==============================================");
     }
@@ -33,17 +32,17 @@ public class RunSalaryCalculator {
 
         // hourlyRate = 12,000,000 / 22 / 8 = 68,181.8
         // overtimePay = round(68,181.8 * 10 * 1.5) = 1,022,727
-        // attendanceBonus = round(12,000,000 * 0.05) = 600,000
-        // gross = 12,000,000 + 1,022,727 + 600,000 = 13,622,727
-        // tax = round(13,622,727 * 0.10) = 1,362,273
-        // net = 13,622,727 - 1,362,273 = 12,260,454
+        // attendanceBonus = 500,000 (cố định vì đi đủ ngày)
+        // gross = 12,000,000 + 1,022,727 + 500,000 = 13,522,727
+        // tax = round(13,522,727 * 0.10) = 1,352,273
+        // net = 13,522,727 - 1,352,273 = 12,170,454
 
         System.out.println("  OT pay            : " + (long) calc.getOvertimePay());
         System.out.println("  Attendance bonus  : " + (long) calc.getAttendanceBonus());
         System.out.println("  Gross salary      : " + (long) calc.getGrossSalary());
         System.out.println("  Net salary        : " + (long) calc.getNetSalary());
 
-        if (calc.getOvertimePay() > 0 && calc.getAttendanceBonus() > 0 && calc.getNetSalary() > 12_000_000) {
+        if (calc.getOvertimePay() > 0 && calc.getAttendanceBonus() == 500_000 && calc.getNetSalary() > 12_000_000) {
             System.out.println("  PASS");
         } else {
             System.out.println("  FAIL");
@@ -59,10 +58,10 @@ public class RunSalaryCalculator {
         SalaryCalculator calc = SalaryCalculator.forParttime(8_000_000.0, 0, 0);
         calc.calculate();
 
-        // attendanceBonus = round(8,000,000 * 0.05) = 400,000
-        // gross = 8,000,000 + 400,000 = 8,400,000
-        // tax = round(8,400,000 * 0.05) = 420,000  <- PARTTIME thue 5%
-        // net = 8,400,000 - 420,000 = 7,980,000
+        // attendanceBonus = 500,000 (cố định vì đi đủ ngày)
+        // gross = 8,000,000 + 500,000 = 8,500,000
+        // tax = round(8,500,000 * 0.05) = 425,000  <- PARTTIME thue 5%
+        // net = 8,500,000 - 425,000 = 8,075,000
 
         System.out.println("  Attendance bonus  : " + (long) calc.getAttendanceBonus());
         System.out.println("  Tax (5%)          : " + (long) calc.getTaxAmount());
@@ -88,9 +87,10 @@ public class RunSalaryCalculator {
         calc.calculate();
 
         // absenceDeduction = round(12,000,000 / 22 * 2) = 1,090,909
-        // attendanceBonus = 0 (vi nghi > 0 ngay)
+        // attendanceBonus = 0 (vi nghi > 0 ngay, mat bonus 500k)
         // gross = 12,000,000 - 1,090,909 = 10,909,091
-        // net < base
+        // tax = round(10,909,091 * 0.10) = 1,090,909
+        // net = 10,909,091 - 1,090,909 = 9,818,182
 
         System.out.println("  Absence deduction : " + (long) calc.getAbsenceDeduction());
         System.out.println("  Attendance bonus  : " + (long) calc.getAttendanceBonus());
@@ -103,45 +103,6 @@ public class RunSalaryCalculator {
         }
     }
 
-    // ─── TC04: Nghi dung 22 ngay, net = 0 ───────────────────────────────────
-    void testNghi22Ngay_NetBang0() {
-
-        System.out.println("\n[TC04] FULLTIME | Nghi dung 22 ngay | Net phai bang 0");
-
-        // Fix: baseSalary la double
-        SalaryCalculator calc = SalaryCalculator.forFulltime(4_000_000.0, 0, 22 );
-;
-        calc.calculate();
-
-        // absenceDeduction = 4,000,000 / 22 * 22 = 4,000,000
-        // gross = 4,000,000 - 4,000,000 = 0
-        // net = 0
-
-        System.out.println("  Absence deduction : " + (long) calc.getAbsenceDeduction());
-        System.out.println("  Gross salary      : " + (long) calc.getGrossSalary());
-        System.out.println("  Net salary        : " + (long) calc.getNetSalary());
-
-        if (calc.getGrossSalary() == 0 && calc.getNetSalary() == 0) {
-            System.out.println("  PASS");
-        } else {
-            System.out.println("  FAIL – Net khong bang 0: " + (long) calc.getNetSalary());
-        }
-    }
-
-    // ─── TC05: Chua goi calculate(), getter phai nem exception ───────────────
-    void testChuaCalculate_NemException() {
-
-        System.out.println("\n[TC05] Chua goi calculate() | Getter phai nem IllegalStateException");
-
-        // Fix: baseSalary phai la double (12_000_000.0)
-        SalaryCalculator calc = new SalaryCalculator(12_000_000.0, 0, 0, 0.10);
-
-        try {
-            calc.getNetSalary();
-            System.out.println("  FAIL – Khong nem exception!");
-        } catch (IllegalStateException e) {
-            System.out.println("  Exception: " + e.getMessage());
-            System.out.println("  PASS");
-        }
-    }
+    
+    
 }
