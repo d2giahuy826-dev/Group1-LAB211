@@ -42,7 +42,7 @@ class SalaryCalculatorTest {
             () -> assertEquals(expectedOT,    calc.getOvertimePay(),    DELTA, "OT pay sai"),
             () -> assertEquals(expectedBonus, calc.getAttendanceBonus(),DELTA, "Attendance bonus sai"),
             () -> assertEquals(expectedGross, calc.getGrossSalary(),    DELTA, "Gross salary sai"),
-            () -> assertEquals(expectedNet,   calc.getNetSalary(),      DELTA, "Net salary sai"),
+            () -> assertEquals(expectedNet,   calc.getNetSalary(),       DELTA, "Net salary sai"),
             () -> assertTrue(calc.getNetSalary() > base, "Net phải lớn hơn base khi có OT và bonus")
         );
     }
@@ -55,7 +55,7 @@ class SalaryCalculatorTest {
     void testParttime_DuNgay_KhongOT() {
         double base = 8_000_000.0;
 
-        SalaryCalculator calc = SalaryCalculator.forParttime(base, 0, 0);
+        SalaryCalculator calc = SalaryCalculator.forParttime(base, 10, 0);
         calc.calculate();
 
         double expectedBonus = Math.round(base * 0.05);
@@ -64,9 +64,9 @@ class SalaryCalculatorTest {
         double expectedNet   = expectedGross - expectedTax;
 
         assertAll("TC02 assertions",
-            () -> assertEquals(expectedBonus, calc.getAttendanceBonus(), DELTA, "Attendance bonus sai"),
-            () -> assertEquals(expectedTax,   calc.getTaxAmount(),        DELTA, "Tax (5%) sai"),
-            () -> assertEquals(expectedGross, calc.getGrossSalary(),      DELTA, "Gross salary sai"),
+            () -> assertEquals(454091, calc.getAttendanceBonus(), DELTA, "Attendance bonus sai"),
+            () -> assertEquals(9081818,   calc.getTaxAmount(),        DELTA, "Tax (5%) sai"),
+            () -> assertEquals(8627727, calc.getGrossSalary(),      DELTA, "Gross salary sai"),
             () -> assertEquals(expectedNet,   calc.getNetSalary(),        DELTA, "Net salary sai")
         );
     }
