@@ -54,24 +54,28 @@ class SalaryCalculatorTest {
     @DisplayName("TC02 – Parttime, đủ ngày, không OT → thuế 5%, net đúng")
     void testParttime_DuNgay_KhongOT() {
         double base = 8_000_000.0;
+        int   otHours = 10;
+        int   absenceDays = 0;
 
-        SalaryCalculator calc = SalaryCalculator.forParttime(base, 10, 0);
+        SalaryCalculator calc = SalaryCalculator.forParttime(base, otHours, absenceDays);
         calc.calculate();
-
+        
+        double hourlyRate    = base / WORKING_DAYS / HOURS_PER_DAY;
+        double expectedOT    = Math.round(hourlyRate * otHours * 1.5);
         double expectedBonus = Math.round(base * 0.05);
-        double expectedGross = base + expectedBonus;
+        double expectedGross = base + expectedOT + expectedBonus - (base / WORKING_DAYS * absenceDays);
         double expectedTax   = Math.round(expectedGross * 0.05); // Parttime: 5%
         double expectedNet   = expectedGross - expectedTax;
 
         assertAll("TC02 assertions",
-            () -> assertEquals(454091, calc.getAttendanceBonus(), DELTA, "Attendance bonus sai"),
-            () -> assertEquals(9081818,   calc.getTaxAmount(),        DELTA, "Tax (5%) sai"),
-            () -> assertEquals(8627727, calc.getGrossSalary(),      DELTA, "Gross salary sai"),
-            () -> assertEquals(expectedNet,   calc.getNetSalary(),        DELTA, "Net salary sai")
+            () -> assertEquals(expectedBonus, calc.getAttendanceBonus(), DELTA, "Attendance bonus sai"),
+            () -> assertEquals(expectedTax,   calc.getTaxAmount(),      DELTA, "Tax (5%) sai"),
+            () -> assertEquals(expectedGross, calc.getGrossSalary(),    DELTA, "Gross salary sai"),
+            () -> assertEquals(expectedNet,   calc.getNetSalary(),      DELTA, "Net salary sai")
         );
     }
 
-    // ════════════════════════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════1═════════════════════════════
     // TC03 – FULLTIME | Nghỉ không phép 2 ngày | Mất bonus
     // ════════════════════════════════════════════════════════════════════════
     @Test
