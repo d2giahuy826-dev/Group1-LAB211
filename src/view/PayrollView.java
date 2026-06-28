@@ -5,14 +5,7 @@ import model.PayrollEntry;
 import model.PayrollRun;
 
 import java.util.List;
-import java.util.Optional;
 
-/**
- * PayrollView – Giao diện console quản lý Bảng lương.
- *
- * ⚠ KHÔNG chứa công thức tính lương — chỉ hiển thị kết quả từ Controller.
- * ⚠ KHÔNG truy cập CSV trực tiếp.
- */
 public class PayrollView {
 
     private final PayrollController controller;
@@ -66,9 +59,9 @@ public class PayrollView {
         System.out.printf("  Đang chạy bảng lương %d/%d...%n", month, year);
 
         try {
-            PayrollRun run = controller.runPayroll(month, year);
+            PayrollController.RunResult result = controller.runPayroll(month, year);
             System.out.println("\n  ✓ Hoàn thành!");
-            printRunSummary(run);
+            printRunSummary(result);
         } catch (IllegalStateException e) {
             System.out.println("  [!] " + e.getMessage());
         } catch (Exception e) {
@@ -134,8 +127,17 @@ public class PayrollView {
 
     // ─── Print helpers ────────────────────────────────────────────────────────
 
+    private void printRunSummary(PayrollController.RunResult result) {
+        System.out.printf("  Run ID     : %s%n",      result.runId);
+        System.out.printf("  Nhân viên  : %d%n",      result.processedCount);
+        System.out.printf("  Bỏ qua     : %d%n",      result.skippedCount);
+        System.out.printf("  Tổng lương : %,d VNĐ%n", result.totalNetPay);
+        System.out.println();
+    }
+
     private void printPayrollTable(List<PayrollEntry> entries, int month, int year) {
-        System.out.printf("%n  BẢNG LƯƠNG THÁNG %d/%d — %d nhân viên%n", month, year, entries.size());
+        System.out.printf("%n  BẢNG LƯƠNG THÁNG %d/%d — %d nhân viên%n",
+            month, year, entries.size());
         System.out.println("  " + "═".repeat(90));
         System.out.printf("  %-10s %-8s %-14s %-14s %-14s %-14s %-10s%n",
             "Emp ID", "Phòng", "Lương cơ bản", "OT + Bonus", "Khấu trừ", "Thuế", "Thực nhận");
@@ -144,7 +146,6 @@ public class PayrollView {
         long totalNet = 0;
         for (PayrollEntry e : entries) {
             long otAndBonus = e.getOvertimePay() + e.getBonus();
-            long deductions = e.getAbsenceDeduction() + e.getTaxAmount();
             System.out.printf("  %-10s %-8s %,14d %,14d %,14d %,14d %,10d%n",
                 e.getEmpId(),
                 e.getDeptId(),
@@ -177,15 +178,6 @@ public class PayrollView {
         System.out.printf( "  │  LƯƠNG THỰC NHẬN: %,23d │%n", e.getNetSalary());
         System.out.printf( "  │  Trạng thái    : %-24s│%n", e.getStatus());
         System.out.println("  └─────────────────────────────────────────┘");
-        System.out.println();
-    }
-
-    private void printRunSummary(PayrollRun run) {
-        System.out.printf("  Run ID     : %s%n",    run.getId());
-        System.out.printf("  Tháng/Năm  : %d/%d%n", run.getMonth(), run.getYear());
-        System.out.printf("  Nhân viên  : %d%n",    run.getTotalEmployees());
-        System.out.printf("  Tổng lương : %,d VNĐ%n", run.getTotalNetPay());
-        System.out.printf("  Hoàn thành : %s%n",    run.getCompletedAt());
         System.out.println();
     }
 }
