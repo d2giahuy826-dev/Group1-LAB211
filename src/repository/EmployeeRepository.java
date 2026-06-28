@@ -32,7 +32,9 @@ public class EmployeeRepository extends CsvRepository<Employee> {
             case "id":
             case "empid":
                 return value.equals(employee.getId());
-
+            case "deptid":
+            return value.equals(employee.getDeptId());
+            
             default:
                 return false;
         }
