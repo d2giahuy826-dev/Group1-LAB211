@@ -4,6 +4,7 @@ import exception.DuplicatePaymentException;
 import model.*;
 import repository.AttendanceRepository;
 import repository.EmployeeRepository;
+import repository.LeaveRequestRepository;
 import repository.PayrollEntryRepository;
 import repository.PayrollRunRepository;
 
@@ -19,25 +20,31 @@ public class PayrollController {
     private final AttendanceRepository    attendanceRepo;
     private final PayrollEntryRepository  payrollEntryRepo;
     private final PayrollRunRepository    payrollRunRepo;
+    private final LeaveRequestRepository  leaveRequestRepo; // thêm để cấp dữ liệu cho ReportView
 
     private final DateTimeFormatter DATE_FMT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+    // ─── Constructor mặc định (tự tạo repo) ──────────────────────────────────
     public PayrollController() {
         this.employeeRepo     = new EmployeeRepository();
         this.attendanceRepo   = new AttendanceRepository();
         this.payrollEntryRepo = new PayrollEntryRepository("data/payroll_entries.csv");
         this.payrollRunRepo   = new PayrollRunRepository();
+        this.leaveRequestRepo = new LeaveRequestRepository();
     }
 
+    // ─── Constructor DI (dùng trong Main.java và Test) ────────────────────────
     public PayrollController(EmployeeRepository employeeRepo,
                              AttendanceRepository attendanceRepo,
                              PayrollEntryRepository payrollEntryRepo,
-                             PayrollRunRepository payrollRunRepo) {
+                             PayrollRunRepository payrollRunRepo,
+                             LeaveRequestRepository leaveRequestRepo) {
         this.employeeRepo     = employeeRepo;
         this.attendanceRepo   = attendanceRepo;
         this.payrollEntryRepo = payrollEntryRepo;
         this.payrollRunRepo   = payrollRunRepo;
+        this.leaveRequestRepo = leaveRequestRepo;
     }
 
     // ─── Main use case ────────────────────────────────────────────────────────
@@ -120,6 +127,16 @@ public class PayrollController {
 
     public List<PayrollRun> getAllRuns() {
         return payrollRunRepo.loadAll();
+    }
+
+    // ─── Query methods cho ReportView (đúng chuẩn MVC — View không gọi repo) ──
+
+    public List<Employee> getAllEmployees() {
+        return employeeRepo.loadAll();
+    }
+
+    public List<LeaveRequest> getAllLeaveRequests() {
+        return leaveRequestRepo.loadAll();
     }
 
     // ─── Helpers ─────────────────────────────────────────────────────────────

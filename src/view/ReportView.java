@@ -1,25 +1,25 @@
 package view;
 
 import controller.PayrollController;
-import repository.EmployeeRepository;
-import repository.LeaveRequestRepository;
 import model.Employee;
 import model.LeaveRequest;
+import model.LeaveStatus;
 import model.PayrollEntry;
 import model.PayrollRun;
 
 import java.util.List;
 
+/**
+ * ReportView – Hiển thị báo cáo tổng kết.
+ *
+ * ✅ Đúng chuẩn MVC: KHÔNG gọi Repository trực tiếp.
+ * Toàn bộ data lấy qua PayrollController.
+ */
 public class ReportView {
 
-    private final PayrollController       payrollController;
-    private final MainView                main;
+    private final PayrollController payrollController;
+    private final MainView          main;
 
-    // Các repository phụ trợ để lấy dữ liệu tổng hợp
-    private final EmployeeRepository      employeeRepo     = new EmployeeRepository();
-    private final LeaveRequestRepository  leaveRequestRepo = new LeaveRequestRepository();
-   
-         
     // ─── Constructor (Dependency Injection từ MainView) ───────────────────────
     public ReportView(PayrollController payrollController, MainView main) {
         this.payrollController = payrollController;
@@ -34,10 +34,10 @@ public class ReportView {
             int choice = main.readInt("Nhap lua chon: ");
 
             switch (choice) {
-                case 1: reportMonthlySummary(); break;
-                case 2: reportPayrollHistory(); break;
+                case 1: reportMonthlySummary();  break;
+                case 2: reportPayrollHistory();  break;
                 case 3: reportEmployeeSummary(); break;
-                case 0: back = true;            break;
+                case 0: back = true;             break;
                 default: System.out.println("  [!] Lua chon khong hop le.");
             }
         }
@@ -48,7 +48,7 @@ public class ReportView {
         System.out.println("\n------------------------------------------");
         System.out.println(  "|         BAO CAO TONG KET                |");
         System.out.println(  "|-----------------------------------------|");
-        System.out.println(  "| 1. Bao cao tong ket thang               |");
+        System.out.println(  "|  1. Bao cao tong ket thang              |");
         System.out.println(  "|  2. Lich su cac dot chay luong          |");
         System.out.println(  "|  3. Tong hop nhan vien                  |");
         System.out.println(  "|  0. Quay lai Menu chinh                 |");
@@ -68,10 +68,10 @@ public class ReportView {
             return;
         }
 
-        long totalNet        = 0;
-        long totalBonus      = 0;
-        long totalDeduction  = 0;
-        long totalTax        = 0;
+        long totalNet       = 0;
+        long totalBonus     = 0;
+        long totalDeduction = 0;
+        long totalTax       = 0;
 
         for (PayrollEntry e : entries) {
             totalNet       += e.getNetSalary();
@@ -83,12 +83,12 @@ public class ReportView {
         System.out.println("\n  " + "═".repeat(48));
         System.out.printf( "  BAO CAO LUONG THANG %d/%d%n", month, year);
         System.out.println("  " + "─".repeat(48));
-        System.out.printf( "  So nhan vien xu ly  : %d%n",      entries.size());
+        System.out.printf( "  So nhan vien xu ly    : %d%n",      entries.size());
         System.out.printf( "  Tong thuong chuyen can: %,d VND%n", totalBonus);
-        System.out.printf( "  Tong khau tru vang   : %,d VND%n", totalDeduction);
-        System.out.printf( "  Tong thue TNCN       : %,d VND%n", totalTax);
+        System.out.printf( "  Tong khau tru vang    : %,d VND%n", totalDeduction);
+        System.out.printf( "  Tong thue TNCN        : %,d VND%n", totalTax);
         System.out.println("  " + "─".repeat(48));
-        System.out.printf( "  TONG THUC NHAN       : %,d VND%n", totalNet);
+        System.out.printf( "  TONG THUC NHAN        : %,d VND%n", totalNet);
         System.out.println("  " + "═".repeat(48));
         System.out.println();
     }
@@ -123,30 +123,31 @@ public class ReportView {
     private void reportEmployeeSummary() {
         System.out.println("\n  === TONG HOP NHAN VIEN ===");
 
-        List<Employee>     employees     = employeeRepo.loadAll();
-        List<LeaveRequest> leaveRequests = leaveRequestRepo.loadAll();
+        // ✅ Lấy data qua Controller, không gọi repo trực tiếp
+        List<Employee>     employees     = payrollController.getAllEmployees();
+        List<LeaveRequest> leaveRequests = payrollController.getAllLeaveRequests();
 
         long activeCount   = employees.stream().filter(Employee::isActive).count();
         long inactiveCount = employees.size() - activeCount;
 
         long pendingLeaves = leaveRequests.stream()
-                .filter(r -> r.getStatus() == model.LeaveStatus.PENDING)
+                .filter(r -> r.getStatus() == LeaveStatus.PENDING)
                 .count();
         long approvedLeaves = leaveRequests.stream()
-                .filter(r -> r.getStatus() == model.LeaveStatus.APPROVED)
+                .filter(r -> r.getStatus() == LeaveStatus.APPROVED)
                 .count();
 
-        System.out.println("\n  " + "═".repeat(40));
+        System.out.println("\n  " + "-".repeat(40));
         System.out.println("  TONG HOP NHAN VIEN & NGHI PHEP");
-        System.out.println("  " + "─".repeat(40));
-        System.out.printf( "  Tong nhan vien  : %d%n",   employees.size());
-        System.out.printf( "  Dang lam viec   : %d%n",   activeCount);
-        System.out.printf( "  Da nghi viec    : %d%n",   inactiveCount);
-        System.out.println("  " + "─".repeat(40));
-        System.out.printf( "  Tong don phep   : %d%n",   leaveRequests.size());
-        System.out.printf( "  Cho duyet       : %d%n",   pendingLeaves);
-        System.out.printf( "  Da duyet        : %d%n",   approvedLeaves);
-        System.out.println("  " + "═".repeat(40));
+        System.out.println("  " + "-".repeat(40));
+        System.out.printf( "  Tong nhan vien  : %d%n", employees.size());
+        System.out.printf( "  Dang lam viec   : %d%n", activeCount);
+        System.out.printf( "  Da nghi viec    : %d%n", inactiveCount);
+        System.out.println("  " + "-".repeat(40));
+        System.out.printf( "  Tong don phep   : %d%n", leaveRequests.size());
+        System.out.printf( "  Cho duyet       : %d%n", pendingLeaves);
+        System.out.printf( "  Da duyet        : %d%n", approvedLeaves);
+        System.out.println("  " + "-".repeat(40));
         System.out.println();
     }
 }

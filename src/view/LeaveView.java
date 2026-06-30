@@ -2,12 +2,8 @@ package view;
 
 import controller.LeaveController;
 import model.LeaveType;
-import model.LeaveRequest;
-import model.LeaveStatus;
 import exception.InsufficientLeaveException;
-
 import java.time.LocalDate;
-import java.util.List;
 
 public class LeaveView {
 
@@ -39,14 +35,14 @@ public class LeaveView {
 
     // ─── Menu ─────────────────────────────────────────────────────────────────
     private void printMenu() {
-        System.out.println("\n┌──────────────────────────────────────────┐");
-        System.out.println(  "│          QUAN LY NGHI PHEP               │");
-        System.out.println(  "├──────────────────────────────────────────┤");
-        System.out.println(  "│  1. Nop don xin nghi phep                │");
-        System.out.println(  "│  2. Duyet don nghi phep                  │");
-        System.out.println(  "│  3. Tu choi don nghi phep                │");
-        System.out.println(  "│  0. Quay lai Menu chinh                  │");
-        System.out.println(  "└──────────────────────────────────────────┘");
+        System.out.println("\n--------------------------------------------");
+        System.out.println(  "|          QUAN LY NGHI PHEP               |");
+        System.out.println(  "|------------------------------------------|");
+        System.out.println(  "| 1. Nop don xin nghi phep                 |");
+        System.out.println(  "|  2. Duyet don nghi phep                  |");
+        System.out.println(  "|  3. Tu choi don nghi phep                |");
+        System.out.println(  "|  0. Quay lai Menu chinh                  |");
+        System.out.println(  "--------------------------------------------");
     }
 
     // ─── Actions ──────────────────────────────────────────────────────────────

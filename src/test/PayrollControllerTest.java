@@ -97,8 +97,10 @@ class PayrollControllerTest {
             }
         };
 
-        controller = new PayrollController(
-                employeeRepo, attendanceRepo, payrollEntryRepo, payrollRunRepo);
+       controller = new PayrollController(
+        employeeRepo, attendanceRepo, payrollEntryRepo, payrollRunRepo, null);
+//                                                                       ^^^^
+//                                         thêm null — test không cần leaveRequestRepo
     }
 
     // ─── Helper: build AttendanceRepository trỏ vào tempDir ─────────────────

@@ -16,25 +16,25 @@ public class Main {
 
     public static void main(String[] args) {
 
-    // ─── 1. Repository layer ─────────────────────────────────────────
-    EmployeeRepository      employeeRepo   = new EmployeeRepository();
-    AttendanceRepository    attendanceRepo = new AttendanceRepository();
-    PayrollRunRepository    runRepo        = new PayrollRunRepository();
-    PayrollEntryRepository  entryRepo      = new PayrollEntryRepository("data/payroll_entries.csv");
-    LeaveRequestRepository  leaveRequestRepo = new LeaveRequestRepository();
-    LeaveBalanceRepository  leaveBalanceRepo = new LeaveBalanceRepository();
+        // ─── 1. Repository layer ─────────────────────────────────────────────
+        EmployeeRepository     employeeRepo     = new EmployeeRepository();
+        AttendanceRepository   attendanceRepo   = new AttendanceRepository();
+        PayrollRunRepository   runRepo          = new PayrollRunRepository();
+        PayrollEntryRepository entryRepo        = new PayrollEntryRepository("data/payroll_entries.csv");
+        LeaveRequestRepository leaveRequestRepo = new LeaveRequestRepository();
+        LeaveBalanceRepository leaveBalanceRepo = new LeaveBalanceRepository();
 
-    // ─── 2. Controller layer ─────────────────────────────────────────
-    PayrollController  payrollController  = new PayrollController(
-            employeeRepo, attendanceRepo, entryRepo, runRepo);
+        // ─── 2. Controller layer ─────────────────────────────────────────────
+        PayrollController payrollController = new PayrollController(
+                employeeRepo, attendanceRepo, entryRepo, runRepo, leaveRequestRepo);
 
-    LeaveController    leaveController    = new LeaveController(
-            leaveRequestRepo, leaveBalanceRepo);
+        LeaveController leaveController = new LeaveController(
+                leaveRequestRepo, leaveBalanceRepo);
 
-    EmployeeController employeeController = new EmployeeController();
+        EmployeeController employeeController = new EmployeeController();
 
-    // ─── 3. View layer ───────────────────────────────────────────────
-    MainView mainView = new MainView(payrollController, leaveController, employeeController);
-    mainView.start();
+        // ─── 3. View layer ───────────────────────────────────────────────────
+        MainView mainView = new MainView(payrollController, leaveController, employeeController);
+        mainView.start();
     }
 }
