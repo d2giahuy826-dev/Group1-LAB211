@@ -45,14 +45,14 @@ public class ReportView {
 
     // ─── Menu ─────────────────────────────────────────────────────────────────
     private void printMenu() {
-        System.out.println("\n┌──────────────────────────────────────────┐");
-        System.out.println(  "│          BAO CAO TONG KET                │");
-        System.out.println(  "├──────────────────────────────────────────┤");
-        System.out.println(  "│  1. Bao cao tong ket thang               │");
-        System.out.println(  "│  2. Lich su cac dot chay luong            │");
-        System.out.println(  "│  3. Tong hop nhan vien                   │");
-        System.out.println(  "│  0. Quay lai Menu chinh                  │");
-        System.out.println(  "└──────────────────────────────────────────┘");
+        System.out.println("\n------------------------------------------");
+        System.out.println(  "|         BAO CAO TONG KET                |");
+        System.out.println(  "|-----------------------------------------|");
+        System.out.println(  "| 1. Bao cao tong ket thang               |");
+        System.out.println(  "|  2. Lich su cac dot chay luong          |");
+        System.out.println(  "|  3. Tong hop nhan vien                  |");
+        System.out.println(  "|  0. Quay lai Menu chinh                 |");
+        System.out.println(  "-------------------------------------------");
     }
 
     // ─── Report 1: Tổng kết tháng ─────────────────────────────────────────────

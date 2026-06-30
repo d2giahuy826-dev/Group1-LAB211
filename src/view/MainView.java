@@ -52,7 +52,7 @@ public class MainView {
         boolean running = true;
         while (running) {
             printMainMenu();
-            int choice = readInt("Nhập lựa chọn: ");
+            int choice = readInt("Nhap lua chon: ");
 
             switch (choice) {
                 case 1:
@@ -71,11 +71,11 @@ public class MainView {
                     running = false;
                     break;
                 default:
-                    System.out.println("  [!] Lựa chọn không hợp lệ. Thử lại.");
+                    System.out.println("  [!] Lua chon khong hop le. Thu lai.");
             }
         }
 
-        System.out.println("\n  Tạm biệt! Hệ thống đã đóng.\n");
+        System.out.println("\n  Tam biet! He thong da dong.\n");
         scanner.close();
     }
 
@@ -83,23 +83,23 @@ public class MainView {
 
     private void printWelcome() {
         System.out.println();
-        System.out.println("╔══════════════════════════════════════════════════════╗");
-        System.out.println("║     EMPLOYEE PAYROLL MANAGEMENT SYSTEM               ║");
-        System.out.println("║     LAB211 — FPT University                          ║");
-        System.out.println("╚══════════════════════════════════════════════════════╝");
+        System.out.println("----------------------------------------------------------");
+        System.out.println("|     EMPLOYEE PAYROLL MANAGEMENT SYSTEM                  |");
+        System.out.println("|     LAB211 — FPT University                             |");
+        System.out.println("----------------------------------------------------------");
         System.out.println();
     }
 
     private void printMainMenu() {
-        System.out.println("┌──────────────────────────────────────────┐");
-        System.out.println("│              MENU CHÍNH                  │");
-        System.out.println("├──────────────────────────────────────────┤");
-        System.out.println("│  1. Quản lý Bảng lương (Payroll)         │");
-        System.out.println("│  2. Quản lý Nghỉ phép  (Leave)           │");
-        System.out.println("│  3. Quản lý Nhân viên  (Employee)        │");
-        System.out.println("│  4. Báo cáo tổng kết   (Report)          │");
-        System.out.println("│  0. Thoát                                │");
-        System.out.println("└──────────────────────────────────────────┘");
+        System.out.println("--------------------------------------------");
+        System.out.println("|              MENU CHINH                  |");
+        System.out.println("|------------------------------------------|");
+        System.out.println("|  1. Quan ly Bang luong (Payroll)         |");
+        System.out.println("|  2. Quan ly Nghi phep  (Leave)           |");
+        System.out.println("|  3. Quan ly Nhan vien  (Employee)        |");
+        System.out.println("|  4. Bao cao tong ket   (Report)          |");
+        System.out.println("|  0. Thoat                                |");
+        System.out.println("--------------------------------------------");
     }
 
     // ─── Input helpers (dùng chung cho toàn bộ View layer) ───────────────────
@@ -114,7 +114,7 @@ public class MainView {
             try {
                 return Integer.parseInt(line);
             } catch (NumberFormatException e) {
-                System.out.println("  [!] Vui lòng nhập số nguyên.");
+                System.out.println("  [!] Vui long nhap so nguyen.");
             }
         }
     }
@@ -127,7 +127,7 @@ public class MainView {
             System.out.print(prompt);
             String line = scanner.nextLine().trim();
             if (!line.isEmpty()) return line;
-            System.out.println("  [!] Không được để trống.");
+            System.out.println("  [!] Khong duoc de trong.");
         }
     }
 

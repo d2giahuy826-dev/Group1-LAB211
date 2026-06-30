@@ -22,7 +22,7 @@ public class PayrollView {
         boolean back = false;
         while (!back) {
             printMenu();
-            int choice = main.readInt("Nhập lựa chọn: ");
+            int choice = main.readInt("Nhap lua chon: ");
 
             switch (choice) {
                 case 1: runPayroll();         break;
@@ -30,7 +30,7 @@ public class PayrollView {
                 case 3: viewEmployeeDetail(); break;
                 case 4: viewAllRuns();        break;
                 case 0: back = true;          break;
-                default: System.out.println("  [!] Lựa chọn không hợp lệ.");
+                default: System.out.println("  [!] Lua chon không hop le.");
             }
         }
     }
@@ -38,46 +38,47 @@ public class PayrollView {
     // ─── Menu ─────────────────────────────────────────────────────────────────
 
     private void printMenu() {
-        System.out.println("\n┌──────────────────────────────────────────┐");
-        System.out.println(  "│          QUẢN LÝ BẢNG LƯƠNG             │");
-        System.out.println(  "├──────────────────────────────────────────┤");
-        System.out.println(  "│  1. Chạy bảng lương tháng               │");
-        System.out.println(  "│  2. Xem bảng lương theo tháng            │");
-        System.out.println(  "│  3. Xem chi tiết lương nhân viên         │");
-        System.out.println(  "│  4. Lịch sử các đợt chạy lương           │");
-        System.out.println(  "│  0. Quay lại Menu chính                  │");
-        System.out.println(  "└──────────────────────────────────────────┘");
+        System.out.println("\n-------------------------------------------");
+        System.out.println(  "|          QUAN LY BANG LUONG              |");
+        System.out.println(  "|------------------------------------------|");
+        System.out.println(  "|  1. Chay bang luong thang                |");
+        System.out.println(  "|  2. Xem bang luong theo thang            |");
+        System.out.println(  "|  3. Xem chi tiet lương nhan vien         |");
+        System.out.println(  "|  4. Lich su cac dot chay luong           |");
+        System.out.println(  "|  0. Quay lai Menu chinh                  |");
+        System.out.println(  "--------------------------------------------");
+        
     }
 
     // ─── Actions ─────────────────────────────────────────────────────────────
 
     private void runPayroll() {
-        System.out.println("\n  === CHẠY BẢNG LƯƠNG ===");
-        int month = main.readInt("  Tháng (1-12): ");
-        int year  = main.readInt("  Năm (vd: 2024): ");
+        System.out.println("\n  === CHAY BANG LUONG ===");
+        int month = main.readInt("  Thang (1-12): ");
+        int year  = main.readInt("  Nam (vd: 2024): ");
 
-        System.out.printf("  Đang chạy bảng lương %d/%d...%n", month, year);
+        System.out.printf("  Dang chay bang luong %d/%d...%n", month, year);
 
         try {
             PayrollController.RunResult result = controller.runPayroll(month, year);
-            System.out.println("\n  ✓ Hoàn thành!");
+            System.out.println("\n  ✓ Hoan thanh!");
             printRunSummary(result);
         } catch (IllegalStateException e) {
             System.out.println("  [!] " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("  [!] Lỗi: " + e.getMessage());
+            System.out.println("  [!] Loi: " + e.getMessage());
         }
     }
 
     private void viewMonthlyTable() {
-        System.out.println("\n  === BẢNG LƯƠNG THEO THÁNG ===");
-        int month = main.readInt("  Tháng (1-12): ");
-        int year  = main.readInt("  Năm (vd: 2024): ");
+        System.out.println("\n  === BANG LUONG THEO THANG ===");
+        int month = main.readInt("  Thang (1-12): ");
+        int year  = main.readInt("  Nam (vd: 2024): ");
 
         List<PayrollEntry> entries = controller.getEntriesByMonthYear(month, year);
 
         if (entries.isEmpty()) {
-            System.out.printf("  [!] Chưa có dữ liệu lương tháng %d/%d.%n", month, year);
+            System.out.printf("  [!] Chua co du lieu luong thang %d/%d.%n", month, year);
             return;
         }
 
@@ -85,15 +86,15 @@ public class PayrollView {
     }
 
     private void viewEmployeeDetail() {
-        System.out.println("\n  === CHI TIẾT LƯƠNG NHÂN VIÊN ===");
-        String empId = main.readString("  Mã nhân viên (vd: EMP0001): ");
-        int month    = main.readInt("  Tháng (1-12): ");
-        int year     = main.readInt("  Năm (vd: 2024): ");
+        System.out.println("\n  === CHI TIET LUONG NHAN VIEN ===");
+        String empId = main.readString("  Ma nhan vien (vd: EMP0001): ");
+        int month    = main.readInt("  Thang (1-12): ");
+        int year     = main.readInt("  Nam (vd: 2024): ");
 
         PayrollEntry entry = controller.getEntryByEmpAndMonth(empId, month, year);
 
         if (entry == null) {
-            System.out.printf("  [!] Không tìm thấy dữ liệu lương của %s tháng %d/%d.%n",
+            System.out.printf("  [!] Khong tim thay du lieu luong cua %s thang %d/%d.%n",
                 empId, month, year);
             return;
         }
@@ -102,16 +103,16 @@ public class PayrollView {
     }
 
     private void viewAllRuns() {
-        System.out.println("\n  === LỊCH SỬ ĐỢT CHẠY LƯƠNG ===");
+        System.out.println("\n  === LICH SU DOT CHAY LUONG ===");
         List<PayrollRun> runs = controller.getAllRuns();
 
         if (runs.isEmpty()) {
-            System.out.println("  Chưa có đợt chạy lương nào.");
+            System.out.println("  Chua co dot chay luong nao.");
             return;
         }
 
         System.out.printf("  %-12s %-8s %-12s %-10s %-20s%n",
-            "Run ID", "Tháng", "Nhân viên", "Status", "Tổng lương (VNĐ)");
+            "Run ID", "Thang", "Nhan vien", "Status", "Tong luong (VND)");
         System.out.println("  " + "─".repeat(68));
 
         for (PayrollRun run : runs) {
@@ -129,18 +130,18 @@ public class PayrollView {
 
     private void printRunSummary(PayrollController.RunResult result) {
         System.out.printf("  Run ID     : %s%n",      result.runId);
-        System.out.printf("  Nhân viên  : %d%n",      result.processedCount);
-        System.out.printf("  Bỏ qua     : %d%n",      result.skippedCount);
-        System.out.printf("  Tổng lương : %,d VNĐ%n", result.totalNetPay);
+        System.out.printf("  Nhan vien  : %d%n",      result.processedCount);
+        System.out.printf("  Bo qua     : %d%n",      result.skippedCount);
+        System.out.printf("  Tong luong : %,d VNĐ%n", result.totalNetPay);
         System.out.println();
     }
 
     private void printPayrollTable(List<PayrollEntry> entries, int month, int year) {
-        System.out.printf("%n  BẢNG LƯƠNG THÁNG %d/%d — %d nhân viên%n",
+        System.out.printf("%n  BANG LUONG THANG %d/%d — %d nhan vien%n",
             month, year, entries.size());
         System.out.println("  " + "═".repeat(90));
         System.out.printf("  %-10s %-8s %-14s %-14s %-14s %-14s %-10s%n",
-            "Emp ID", "Phòng", "Lương cơ bản", "OT + Bonus", "Khấu trừ", "Thuế", "Thực nhận");
+            "Emp ID", "Phong", "Luong co ban", "OT + Bonus", "Khau tru", "Thue", "Thuc nhan");
         System.out.println("  " + "─".repeat(90));
 
         long totalNet = 0;
@@ -158,25 +159,25 @@ public class PayrollView {
         }
 
         System.out.println("  " + "─".repeat(90));
-        System.out.printf("  %-43s TỔNG THỰC NHẬN: %,d VNĐ%n", "", totalNet);
+        System.out.printf("  %-43s TONG THUC NHAN: %,d VND%n", "", totalNet);
         System.out.println();
     }
 
     private void printEntryDetail(PayrollEntry e) {
         System.out.println("\n  ┌─────────────────────────────────────────┐");
-        System.out.printf( "  │  CHI TIẾT LƯƠNG: %-24s│%n", e.getEmpId());
+        System.out.printf( "  │  CHI TIET LUONG: %-24s│%n", e.getEmpId());
         System.out.println("  ├─────────────────────────────────────────┤");
-        System.out.printf( "  │  Phòng ban     : %-24s│%n", e.getDeptId());
-        System.out.printf( "  │  Tháng/Năm     : %02d/%-21d│%n", e.getMonth(), e.getYear());
+        System.out.printf( "  │  Phong ban     : %-24s│%n", e.getDeptId());
+        System.out.printf( "  │  Thang/Nam     : %02d/%-21d│%n", e.getMonth(), e.getYear());
         System.out.println("  ├─────────────────────────────────────────┤");
-        System.out.printf( "  │  Lương cơ bản  : %,24d │%n", e.getBaseSalary());
+        System.out.printf( "  │  Luong co ban  : %,24d │%n", e.getBaseSalary());
         System.out.printf( "  │  Lương OT      : %,24d │%n", e.getOvertimePay());
-        System.out.printf( "  │  Thưởng chuyên cần: %,21d │%n", e.getBonus());
-        System.out.printf( "  │  Khấu trừ vắng : %,24d │%n", e.getAbsenceDeduction());
-        System.out.printf( "  │  Thuế TNCN     : %,24d │%n", e.getTaxAmount());
+        System.out.printf( "  │  Thuong chuyen can: %,21d │%n", e.getBonus());
+        System.out.printf( "  │  Khau tru vang : %,24d │%n", e.getAbsenceDeduction());
+        System.out.printf( "  │  Thue TNCN     : %,24d │%n", e.getTaxAmount());
         System.out.println("  ├─────────────────────────────────────────┤");
-        System.out.printf( "  │  LƯƠNG THỰC NHẬN: %,23d │%n", e.getNetSalary());
-        System.out.printf( "  │  Trạng thái    : %-24s│%n", e.getStatus());
+        System.out.printf( "  │  LUONG THUC NHAN: %,23d │%n", e.getNetSalary());
+        System.out.printf( "  │  Trang thai    : %-24s│%n", e.getStatus());
         System.out.println("  └─────────────────────────────────────────┘");
         System.out.println();
     }
