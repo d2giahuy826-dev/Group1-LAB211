@@ -37,8 +37,23 @@ public class LeaveBalanceRepository extends CsvRepository<LeaveBalance> {
     }
 
     // Đã sửa để trả về LeaveBalance thay vì Optional, giúp khớp với file Test
-    public LeaveBalance findByEmployeeId(String id) {
-        return findById(id).orElse(null);
+    public LeaveBalance findByEmployeeId(String empId) {
+        if (empId == null || empId.trim().isEmpty()) {
+            return null;
+        }
+        List<LeaveBalance> matches = loadAll().stream()
+                .filter(lb -> empId.trim().equals(lb.getEmpId()))
+                .collect(java.util.stream.Collectors.toList());
+
+        if (matches.isEmpty()) {
+            return null;
+        }
+
+        int currentYear = java.time.LocalDate.now().getYear();
+        return matches.stream()
+                .filter(lb -> lb.getYear() == currentYear)
+                .findFirst()
+                .orElse(matches.get(0));
     }
 
     // --- CÁC HÀM NGHIỆP VỤ ---
