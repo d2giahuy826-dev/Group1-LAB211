@@ -31,6 +31,7 @@ public class EmployeeView {
                 case 3: findByDept();     break;
                 case 4: updateEmployee(); break;
                 case 5: deleteEmployee(); break;
+                case 6: viewAll();        break;
                 case 0: running = false;  break;
                 default: System.out.println("  [!] Lua chon khong hop le.");
             }
@@ -47,6 +48,7 @@ public class EmployeeView {
         System.out.println(  "│  3. Tim nhan vien theo phong ban          │");
         System.out.println(  "│  4. Cap nhat nhan vien                   │");
         System.out.println(  "│  5. Xoa nhan vien                        │");
+        System.out.println(  "│  6. Xem tat ca nhan vien                 │");
         System.out.println(  "│  0. Quay lai Menu chinh                  │");
         System.out.println(  "└──────────────────────────────────────────┘");
     }
@@ -136,6 +138,17 @@ public class EmployeeView {
         System.out.println(success
                 ? "  ✓ Xoa thanh cong!"
                 : "  [!] Khong tim thay nhan vien de xoa.");
+    }
+
+    private void viewAll() {
+        System.out.println("\n  === TAT CA NHAN VIEN ===");
+        List<Employee> list = controller.getAll();
+        if (list.isEmpty()) {
+            System.out.println("  Chua co nhan vien nao.");
+        } else {
+            System.out.printf("  Tong so nhan vien: %d%n", list.size());
+            list.forEach(this::printEmployee);
+        }
     }
 
     // ─── Print helper ─────────────────────────────────────────────────────────

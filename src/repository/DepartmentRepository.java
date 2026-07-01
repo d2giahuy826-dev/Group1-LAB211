@@ -62,4 +62,16 @@ public class DepartmentRepository {
                 .findFirst()
                 .orElse(null);
     }
+
+    public boolean update(Department dept) {
+        List<Department> list = getAll();
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getId().equals(dept.getId())) {
+                list.set(i, dept);
+                saveAll(list);
+                return true;
+            }
+        }
+        return false;
+    }
 }

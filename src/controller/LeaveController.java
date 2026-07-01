@@ -5,6 +5,7 @@ import repository.*;
 import exception.InsufficientLeaveException;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class LeaveController {
 
@@ -116,5 +117,18 @@ public class LeaveController {
 
         leaveRequestRepo.reject(requestId, approverId);
         System.out.println("[OK] Đã từ chối đơn: " + requestId);
+    }
+
+    // ─── 4. View Leave Balance ────────────────────────────────────────────────
+    /**
+     * Nhân viên xem số dư ngày phép còn lại của mình.
+     */
+    public LeaveBalance getBalance(String empId) {
+        return leaveBalanceRepo.findByEmployeeId(empId);
+    }
+
+    // ─── 5. List pending requests (cho HR duyệt) ─────────────────────────────
+    public List<LeaveRequest> getPendingRequests() {
+        return leaveRequestRepo.findByStatus(LeaveStatus.PENDING);
     }
 }

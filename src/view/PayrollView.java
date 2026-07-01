@@ -29,8 +29,31 @@ public class PayrollView {
                 case 2: viewMonthlyTable();   break;
                 case 3: viewEmployeeDetail(); break;
                 case 4: viewAllRuns();        break;
+                case 5: conductAudit();       break;
                 case 0: back = true;          break;
                 default: System.out.println("  [!] Lua chon không hop le.");
+            }
+        }
+    }
+
+    /**
+     * Menu rut gon cho Employee — chi xem luong cua chinh minh,
+     * khong duoc chay bang luong hay xem bao cao toan cong ty.
+     */
+    public void showEmployeeMenu() {
+        boolean back = false;
+        while (!back) {
+            System.out.println("\n--------------------------------------------");
+            System.out.println(  "|         LUONG CUA TOI (EMPLOYEE)         |");
+            System.out.println(  "|------------------------------------------|");
+            System.out.println(  "|  1. Xem chi tiet luong                   |");
+            System.out.println(  "|  0. Quay lai Menu chinh                  |");
+            System.out.println(  "--------------------------------------------");
+            int choice = main.readInt("Nhap lua chon: ");
+            switch (choice) {
+                case 1: viewEmployeeDetail(); break;
+                case 0: back = true;          break;
+                default: System.out.println("  [!] Lua chon khong hop le.");
             }
         }
     }
@@ -45,6 +68,7 @@ public class PayrollView {
         System.out.println(  "|  2. Xem bang luong theo thang            |");
         System.out.println(  "|  3. Xem chi tiet lương nhan vien         |");
         System.out.println(  "|  4. Lich su cac dot chay luong           |");
+        System.out.println(  "|  5. Kiem toan bang luong                 |");
         System.out.println(  "|  0. Quay lai Menu chinh                  |");
         System.out.println(  "--------------------------------------------");
         
@@ -124,6 +148,19 @@ public class PayrollView {
                 run.getTotalNetPay());
         }
         System.out.println();
+    }
+
+    private void conductAudit() {
+        System.out.println("\n  === KIEM TOAN BANG LUONG ===");
+        List<PayrollEntry> anomalies = controller.auditNegativeNetSalary();
+        if (anomalies.isEmpty()) {
+            System.out.println("  ✓ Khong phat hien bat thuong (khong co netSalary am).");
+            return;
+        }
+        System.out.printf("  [!] Phat hien %d entry bat thuong (netSalary < 0):%n", anomalies.size());
+        anomalies.forEach(e -> System.out.printf(
+            "  %s | %s | %d/%d | netSalary=%,d%n",
+            e.getId(), e.getEmpId(), e.getMonth(), e.getYear(), e.getNetSalary()));
     }
 
     // ─── Print helpers ────────────────────────────────────────────────────────

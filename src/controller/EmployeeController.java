@@ -19,6 +19,10 @@ public class EmployeeController {
         return employeeRepository.findByField("deptId", deptId);
     }
 
+    public List<Employee> getAll() {
+        return employeeRepository.loadAll();
+    }
+
     public void add(Employee employee) {
         employeeRepository.add(employee);
     }

@@ -1,9 +1,12 @@
 package view;
 
 import controller.LeaveController;
+import model.LeaveBalance;
+import model.LeaveRequest;
 import model.LeaveType;
 import exception.InsufficientLeaveException;
 import java.time.LocalDate;
+import java.util.List;
 
 public class LeaveView {
 
@@ -16,33 +19,50 @@ public class LeaveView {
         this.main       = main;
     }
 
-    // ─── Entry point ──────────────────────────────────────────────────────────
-    public void show() {
+    // ─── Menu cho Employee ────────────────────────────────────────────────────
+    public void showEmployeeMenu() {
         boolean back = false;
         while (!back) {
-            printMenu();
-            int choice = main.readInt("Nhap lua chon: ");
+            System.out.println("\n--------------------------------------------");
+            System.out.println(  "|      NGHI PHEP (EMPLOYEE)                |");
+            System.out.println(  "|------------------------------------------|");
+            System.out.println(  "| 1. Nop don xin nghi phep                 |");
+            System.out.println(  "| 2. Xem so du phep                        |");
+            System.out.println(  "| 0. Quay lai Menu chinh                   |");
+            System.out.println(  "--------------------------------------------");
 
+            int choice = main.readInt("Nhap lua chon: ");
             switch (choice) {
-                case 1: submitLeave();      break;
+                case 1: submitLeave();  break;
+                case 2: viewBalance();  break;
+                case 0: back = true;    break;
+                default: System.out.println("  [!] Lua chon khong hop le.");
+            }
+        }
+    }
+
+    // ─── Menu cho HR Staff ────────────────────────────────────────────────────
+    public void showHrMenu() {
+        boolean back = false;
+        while (!back) {
+            System.out.println("\n--------------------------------------------");
+            System.out.println(  "|      DUYET NGHI PHEP (HR STAFF)          |");
+            System.out.println(  "|------------------------------------------|");
+            System.out.println(  "| 1. Xem danh sach don cho duyet            |");
+            System.out.println(  "| 2. Duyet don nghi phep                   |");
+            System.out.println(  "| 3. Tu choi don nghi phep                 |");
+            System.out.println(  "| 0. Quay lai Menu chinh                   |");
+            System.out.println(  "--------------------------------------------");
+
+            int choice = main.readInt("Nhap lua chon: ");
+            switch (choice) {
+                case 1: listPending();      break;
                 case 2: approveLeave();     break;
                 case 3: rejectLeave();      break;
                 case 0: back = true;        break;
                 default: System.out.println("  [!] Lua chon khong hop le.");
             }
         }
-    }
-
-    // ─── Menu ─────────────────────────────────────────────────────────────────
-    private void printMenu() {
-        System.out.println("\n--------------------------------------------");
-        System.out.println(  "|          QUAN LY NGHI PHEP               |");
-        System.out.println(  "|------------------------------------------|");
-        System.out.println(  "| 1. Nop don xin nghi phep                 |");
-        System.out.println(  "|  2. Duyet don nghi phep                  |");
-        System.out.println(  "|  3. Tu choi don nghi phep                |");
-        System.out.println(  "|  0. Quay lai Menu chinh                  |");
-        System.out.println(  "--------------------------------------------");
     }
 
     // ─── Actions ──────────────────────────────────────────────────────────────
@@ -71,6 +91,35 @@ public class LeaveView {
         } catch (Exception e) {
             System.out.println("  [!] Loi: " + e.getMessage());
         }
+    }
+
+    private void viewBalance() {
+        System.out.println("\n  === SO DU NGHI PHEP ===");
+        String empId = main.readString("  Ma nhan vien: ");
+        LeaveBalance balance = controller.getBalance(empId);
+        if (balance == null) {
+            System.out.println("  [!] Khong tim thay so du phep cua nhan vien nay.");
+            return;
+        }
+        System.out.println("  ┌─────────────────────────────────────────┐");
+        System.out.printf( "  │  Phep nam : con %d / tong %d ngay         │%n",
+                balance.getAnnualRemaining(), balance.getAnnualTotal());
+        System.out.printf( "  │  Nghi om  : con %d / tong %d ngay         │%n",
+                balance.getSickRemaining(), balance.getSickTotal());
+        System.out.println("  └─────────────────────────────────────────┘");
+    }
+
+    private void listPending() {
+        System.out.println("\n  === DON NGHI PHEP CHO DUYET ===");
+        List<LeaveRequest> list = controller.getPendingRequests();
+        if (list.isEmpty()) {
+            System.out.println("  Khong co don nao dang cho duyet.");
+            return;
+        }
+        list.forEach(r -> System.out.printf(
+            "  %s | %s | %s | %s -> %s | %d ngay | Ly do: %s%n",
+            r.getId(), r.getEmpId(), r.getType(),
+            r.getStartDate(), r.getEndDate(), r.getDays(), r.getReason()));
     }
 
     private void approveLeave() {

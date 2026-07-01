@@ -8,6 +8,9 @@ import repository.LeaveRequestRepository;
 import repository.PayrollEntryRepository;
 import repository.PayrollRunRepository;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -137,6 +140,41 @@ public class PayrollController {
 
     public List<LeaveRequest> getAllLeaveRequests() {
         return leaveRequestRepo.loadAll();
+    }
+
+    // ─── Conduct Payroll Audit ────────────────────────────────────────────────
+
+    /**
+     * Kiểm toán bảng lương: tìm các entry bất thường (netSalary âm).
+     * Có thể mở rộng thêm quy tắc kiểm toán khác trong tương lai.
+     */
+    public List<PayrollEntry> auditNegativeNetSalary() {
+        return payrollEntryRepo.findAll().stream()
+                .filter(e -> e.getNetSalary() < 0)
+                .collect(Collectors.toList());
+    }
+
+    // ─── Export Payroll CSV ───────────────────────────────────────────────────
+
+    /**
+     * Xuất bảng lương của một tháng ra file CSV chỉ định.
+     *
+     * @return đường dẫn file đã ghi
+     */
+    public String exportPayrollCsv(int month, int year, String outputPath) {
+        List<PayrollEntry> entries = getEntriesByMonthYear(month, year);
+
+        try (PrintWriter pw = new PrintWriter(new FileWriter(outputPath))) {
+            pw.println("entryId,empId,deptId,month,year,baseSalary,overtimePay,"
+                    + "absenceDeduction,bonus,taxAmount,netSalary,status,version,processedAt");
+            for (PayrollEntry e : entries) {
+                pw.println(e.toCsvLine());
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException("Khong the ghi file: " + ex.getMessage());
+        }
+
+        return outputPath;
     }
 
     // ─── Helpers ─────────────────────────────────────────────────────────────

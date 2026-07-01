@@ -1,6 +1,9 @@
 package view;
 
+import controller.AttendanceController;
+import controller.DepartmentController;
 import controller.PayrollController;
+import model.Department;
 import model.Employee;
 import model.LeaveRequest;
 import model.LeaveStatus;
@@ -10,20 +13,27 @@ import model.PayrollRun;
 import java.util.List;
 
 /**
- * ReportView – Hiển thị báo cáo tổng kết.
+ * ReportView – Hiển thị báo cáo tổng kết (Reporting & Data Management Area).
  *
  * ✅ Đúng chuẩn MVC: KHÔNG gọi Repository trực tiếp.
- * Toàn bộ data lấy qua PayrollController.
+ * Toàn bộ data lấy qua Controller.
  */
 public class ReportView {
 
-    private final PayrollController payrollController;
-    private final MainView          main;
+    private final PayrollController    payrollController;
+    private final DepartmentController departmentController;
+    private final AttendanceController attendanceController;
+    private final MainView             main;
 
     // ─── Constructor (Dependency Injection từ MainView) ───────────────────────
-    public ReportView(PayrollController payrollController, MainView main) {
-        this.payrollController = payrollController;
-        this.main              = main;
+    public ReportView(PayrollController payrollController,
+                      DepartmentController departmentController,
+                      AttendanceController attendanceController,
+                      MainView main) {
+        this.payrollController    = payrollController;
+        this.departmentController = departmentController;
+        this.attendanceController = attendanceController;
+        this.main                 = main;
     }
 
     // ─── Entry point ──────────────────────────────────────────────────────────
@@ -37,6 +47,9 @@ public class ReportView {
                 case 1: reportMonthlySummary();  break;
                 case 2: reportPayrollHistory();  break;
                 case 3: reportEmployeeSummary(); break;
+                case 4: reportDepartment();      break;
+                case 5: reportAttendance();      break;
+                case 6: exportPayrollCsv();      break;
                 case 0: back = true;             break;
                 default: System.out.println("  [!] Lua chon khong hop le.");
             }
@@ -48,9 +61,12 @@ public class ReportView {
         System.out.println("\n------------------------------------------");
         System.out.println(  "|         BAO CAO TONG KET                |");
         System.out.println(  "|-----------------------------------------|");
-        System.out.println(  "|  1. Bao cao tong ket thang              |");
-        System.out.println(  "|  2. Lich su cac dot chay luong          |");
-        System.out.println(  "|  3. Tong hop nhan vien                  |");
+        System.out.println(  "|  1. Bao cao tong ket luong thang         |");
+        System.out.println(  "|  2. Lich su cac dot chay luong           |");
+        System.out.println(  "|  3. Tong hop nhan vien                   |");
+        System.out.println(  "|  4. Bao cao phong ban                   |");
+        System.out.println(  "|  5. Bao cao cham cong                   |");
+        System.out.println(  "|  6. Xuat bao cao luong ra CSV            |");
         System.out.println(  "|  0. Quay lai Menu chinh                 |");
         System.out.println(  "-------------------------------------------");
     }
@@ -149,5 +165,48 @@ public class ReportView {
         System.out.printf( "  Da duyet        : %d%n", approvedLeaves);
         System.out.println("  " + "-".repeat(40));
         System.out.println();
+    }
+
+    // ─── Report 4: Báo cáo phòng ban ──────────────────────────────────────────
+    private void reportDepartment() {
+        System.out.println("\n  === BAO CAO PHONG BAN ===");
+        List<Department> depts = departmentController.getAll();
+        if (depts.isEmpty()) {
+            System.out.println("  Chua co du lieu phong ban.");
+            return;
+        }
+        System.out.printf("  %-8s %-20s %-10s %-12s %-15s%n",
+            "Ma PB", "Ten phong ban", "Quan ly", "So NV", "Vi tri");
+        System.out.println("  " + "-".repeat(70));
+        for (Department d : depts) {
+            System.out.printf("  %-8s %-20s %-10s %-12d %-15s%n",
+                d.getId(), d.getName(), d.getManagerId(),
+                d.getTotalEmployees(), d.getLocation());
+        }
+        System.out.println();
+    }
+
+    // ─── Report 5: Báo cáo chấm công ──────────────────────────────────────────
+    private void reportAttendance() {
+        System.out.println("\n  === BAO CAO CHAM CONG ===");
+        int month = main.readInt("  Thang (1-12): ");
+        int year  = main.readInt("  Nam: ");
+        System.out.println("  " + attendanceController.summarize(month, year));
+        System.out.println();
+    }
+
+    // ─── Report 6: Export Payroll CSV ────────────────────────────────────────
+    private void exportPayrollCsv() {
+        System.out.println("\n  === XUAT BAO CAO LUONG RA CSV ===");
+        int month = main.readInt("  Thang (1-12): ");
+        int year  = main.readInt("  Nam: ");
+        String outputPath = main.readString("  Duong dan file xuat (vd: data/export_payroll.csv): ");
+
+        try {
+            String path = payrollController.exportPayrollCsv(month, year, outputPath);
+            System.out.println("  ✓ Da xuat bao cao luong ra: " + path);
+        } catch (Exception e) {
+            System.out.println("  [!] Loi: " + e.getMessage());
+        }
     }
 }

@@ -1,0 +1,4 @@
+userId,username,password,role
+USR001,employee1,123456,EMPLOYEE
+USR002,hr1,123456,HR_STAFF
+USR003,payroll1,123456,PAYROLL_STAFF
