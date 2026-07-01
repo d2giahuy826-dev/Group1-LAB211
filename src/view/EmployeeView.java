@@ -51,8 +51,8 @@ public class EmployeeView {
         System.out.println(  "│  6. Xem tat ca nhan vien                 │");
         System.out.println(  "│  0. Quay lai Menu chinh                  │");
         System.out.println(  "└──────────────────────────────────────────┘");
-    }
 
+    }
     // ─── Actions ──────────────────────────────────────────────────────────────
     private void addEmployee() {
         System.out.println("\n  === THEM NHAN VIEN ===");
@@ -153,13 +153,13 @@ public class EmployeeView {
 
     // ─── Print helper ─────────────────────────────────────────────────────────
     private void printEmployee(Employee emp) {
-        System.out.println("  ┌─────────────────────────────────────────┐");
-        System.out.printf( "  │  Ma NV     : %-27s│%n", emp.getId());
-        System.out.printf( "  │  Ho ten    : %-27s│%n", emp.getFullName());
-        System.out.printf( "  │  Phong ban : %-27s│%n", emp.getDeptId());
-        System.out.printf( "  │  Loai      : %-27s│%n", emp.getEmpType());
-        System.out.printf( "  │  Luong CB  : %,27.0f │%n", emp.getBaseSalary());
-        System.out.printf( "  │  Trang thai: %-27s│%n", emp.getStatus());
-        System.out.println("  └─────────────────────────────────────────┘");
+        System.out.println("  -------------------------------------------");
+        System.out.printf( "  |  Ma NV     : %-27s|%n", emp.getId());
+        System.out.printf( "  |  Ho ten    : %-27s|%n", emp.getFullName());
+        System.out.printf( "  |  Phong ban : %-27s|%n", emp.getDeptId());
+        System.out.printf( "  |  Loai      : %-27s|%n", emp.getEmpType());
+        System.out.printf( "  |  Luong CB  : %,27.0f|%n", emp.getBaseSalary());
+        System.out.printf( "  |  Trang thai: %-27s|%n", emp.getStatus());
+        System.out.println("  -------------------------------------------");
     }
 }
