@@ -107,36 +107,63 @@ public class EmployeeView {
     }
 
     private void updateEmployee() {
-        System.out.println("\n  === CAP NHAT NHAN VIEN ===");
-        try {
-            String id    = main.readString("  Nhap ma nhan vien can sua: ");
-            Employee emp = controller.findById(id);
+    System.out.println("\n  === CAP NHAT NHAN VIEN ===");
+    try {
+        String id = main.readString("  Nhap ma nhan vien can sua: ");
+        Employee emp = controller.findById(id);
 
-            if (emp == null) {
-                System.out.println("  [!] Khong tim thay nhan vien.");
-                return;
+        if (emp == null) {
+            System.out.println("  [!] Khong tim thay nhan vien.");
+            return;
+        }
+
+        System.out.printf("  Ho ten hien tai: %s%n", emp.getFullName());
+        String name = main.readOptionalString("  Ho ten moi (Enter de giu nguyen): ");
+        if (!name.isEmpty()) {
+            emp.setFullName(name);
+        }
+
+        System.out.printf("  Luong co ban hien tai: %,.0f%n", emp.getBaseSalary());
+        String salaryStr = main.readOptionalString("  Luong co ban moi (Enter de giu nguyen): ");
+        if (!salaryStr.isEmpty()) {
+            emp.setBaseSalary(Double.parseDouble(salaryStr));
+        }
+
+        System.out.printf("  Phong ban hien tai: %s%n", emp.getDeptId());
+        String oldDeptId = emp.getDeptId();
+
+        while (true) {
+
+            String deptId = main.readOptionalString(
+                    "  Ma phong ban moi (Enter de giu nguyen): ");
+
+            if (!deptId.isEmpty()) {
+                emp.setDeptId(deptId);
             }
 
-            System.out.printf("  Ho ten hien tai: %s%n", emp.getFullName());
-            String name = main.readOptionalString("  Ho ten moi (Enter de giu nguyen): ");
-            if (!name.isEmpty()) emp.setFullName(name);
+            try {
 
-            System.out.printf("  Luong co ban hien tai: %,.0f%n", emp.getBaseSalary());
-            String salaryStr = main.readOptionalString("  Luong co ban moi (Enter de giu nguyen): ");
-            if (!salaryStr.isEmpty()) emp.setBaseSalary(Double.parseDouble(salaryStr));
+                boolean success = controller.update(emp);
 
-            System.out.printf("  Phong ban hien tai: %s%n", emp.getDeptId());
-            String deptId = main.readOptionalString("  Ma phong ban moi (Enter de giu nguyen): ");
-            if (!deptId.isEmpty()) emp.setDeptId(deptId);
+                System.out.println(success
+                        ? "  ✓ Cap nhat thanh cong!"
+                        : "  [!] Cap nhat khong thanh cong!");
 
-            boolean success = controller.update(emp);
-            System.out.println(success
-                    ? "  ✓ Cap nhat thanh cong!"
-                    : "  [!] Cap nhat khong thanh cong.");
-        } catch (Exception e) {
-            System.out.println("  [!] Loi: " + e.getMessage());
+                break;
+
+            } catch (IllegalArgumentException e) {
+
+                System.out.println("  [!] Loi: " + e.getMessage());
+
+                emp.setDeptId(oldDeptId);
+            }
         }
+
+    } catch (Exception e) {
+        System.out.println("  [!] Loi: " + e.getMessage());
     }
+}
+
 
     private void deleteEmployee() {
         System.out.println("\n  === XOA NHAN VIEN ===");
