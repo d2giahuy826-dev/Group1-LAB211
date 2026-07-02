@@ -69,11 +69,14 @@ public class EmployeeView {
 
             String dateStr = main.readString("  Ngay vao lam (yyyy-MM-dd): ");
             LocalDate joinDate = LocalDate.parse(dateStr);
+            // Thong tin tai khoan dang nhap cho nhan vien (luu vao users.csv)
+            String username = main.readString("  Ten dang nhap (username): ");
+            String password = main.readString("  Mat khau: ");
 
             Employee emp = new Employee(id, name, deptId, type,
                     salary, taxRate, joinDate, EmployeeStatus.ACTIVE);
 
-            controller.add(emp);
+            controller.addEmployeeWithAccount(emp, username, password);
             System.out.println("  ✓ Them nhan vien thanh cong!");
         } catch (Exception e) {
             System.out.println("  [!] Loi: " + e.getMessage());
