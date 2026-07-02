@@ -25,23 +25,29 @@ public class DepartmentRepository {
     }
 
     public List<Department> getAll() {
-        List<Department> list = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.trim().isEmpty()) continue;
-                Department dept = new Department();
-                dept.fromCsvLine(line); // Đọc chuỗi CSV 5 trường có location
-                list.add(dept);
+    List<Department> list = new ArrayList<>();
+    try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
+        String line;
+        boolean isFirstLine = true;                 // ✓ thêm cờ đánh dấu dòng đầu
+        while ((line = br.readLine()) != null) {
+            if (isFirstLine) {
+                isFirstLine = false;
+                continue;                            // ✓ bỏ qua dòng header
             }
-        } catch (IOException e) {
-            System.err.println("Error reading departments: " + e.getMessage());
+            if (line.trim().isEmpty()) continue;
+            Department dept = new Department();
+            dept.fromCsvLine(line);
+            list.add(dept);
         }
-        return list;
+    } catch (IOException e) {
+        System.err.println("Error reading departments: " + e.getMessage());
+    }
+    return list;
     }
 
     public void saveAll(List<Department> list) {
         try (PrintWriter pw = new PrintWriter(new FileWriter(FILE_PATH))) {
+            pw.println("deptId,deptName,managerId,location,headCount");
             for (Department dept : list) {
                 pw.println(dept.toCsvLine()); // Xuất chuỗi CSV kết hợp location
             }
