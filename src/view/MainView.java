@@ -225,13 +225,14 @@ public class MainView {
     }
 
     private void handleEmployeeChoice(int choice) {
-        switch (choice) {
-            case 1: leaveView.showEmployeeMenu();      break;
-            case 2: attendanceView.showEmployeeMenu(); break;
-            case 3: payrollView.showEmployeeMenu();    break;
-            default: System.out.println("  [!] Lua chon khong hop le.");
-        }
+    String currentEmpId = authController.getCurrentUser().getId(); // với role EMPLOYEE, userId == empId
+    switch (choice) {
+        case 1: leaveView.viewOwnBalance(currentEmpId);                  break;
+        case 2: attendanceView.showEmployeeMenu();             break;
+        case 3: payrollView.showEmployeeMenu(currentEmpId);    break;
+        default: System.out.println("  [!] Lua chon khong hop le.");
     }
+}
 
     private void handleHrChoice(int choice) {
         switch (choice) {
