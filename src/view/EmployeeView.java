@@ -125,6 +125,10 @@ public class EmployeeView {
             String salaryStr = main.readOptionalString("  Luong co ban moi (Enter de giu nguyen): ");
             if (!salaryStr.isEmpty()) emp.setBaseSalary(Double.parseDouble(salaryStr));
 
+            System.out.printf("  Phong ban hien tai: %s%n", emp.getDeptId());
+            String deptId = main.readOptionalString("  Ma phong ban moi (Enter de giu nguyen): ");
+            if (!deptId.isEmpty()) emp.setDeptId(deptId);
+
             boolean success = controller.update(emp);
             System.out.println(success
                     ? "  ✓ Cap nhat thanh cong!"

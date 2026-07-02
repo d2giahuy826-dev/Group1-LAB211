@@ -3,6 +3,7 @@ package controller;
 import model.Employee;
 import model.User;
 import model.UserRole;
+import repository.DepartmentRepository;
 import repository.EmployeeRepository;
 import repository.UserRepository;
 import java.util.List;
@@ -12,7 +13,7 @@ public class EmployeeController {
 
     private final EmployeeRepository employeeRepository = new EmployeeRepository();
     private final UserRepository userRepository = new UserRepository();
-
+    private final DepartmentRepository departmentRepository = new DepartmentRepository();
     public Employee findById(String empId) {
         Optional<Employee> result = employeeRepository.findById(empId);
         return result.orElse(null);
@@ -36,14 +37,24 @@ public class EmployeeController {
         throw e;
     }
 }
+    /**
+     * Cap nhat nhan vien. Se validate deptId (neu co thay doi) phai ton tai
+     * that trong departments.csv, tranh chuyen nhan vien sang phong ban "ao".
+     */
     public boolean update(Employee employee) {
+        if (departmentRepository.findById(employee.getDeptId()) == null) {
+            throw new IllegalArgumentException(
+                "Ma phong ban '" + employee.getDeptId() + "' khong ton tai.");
+        }
         return employeeRepository.update(employee);
     }
+
+
 
    /**
  * Neu khong xoa User thi nhan vien da bi xoa van dang nhap duoc vao he thong.
  */
-public boolean delete(String empId) {
+    public boolean delete(String empId) {
     boolean employeeDeleted = employeeRepository.delete(empId);
     if (employeeDeleted) {
         userRepository.delete(empId); // userId == empId (quy uoc cho role EMPLOYEE)
