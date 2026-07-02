@@ -218,4 +218,23 @@ public class PayrollView {
         System.out.println("  └─────────────────────────────────────────┘");
         System.out.println();
     }
+    /**
+     * Dung rieng cho Employee — empId LAY TU SESSION dang nhap,
+     * KHONG cho nhap tay de tranh xem luong nguoi khac.
+     */
+    private void viewOwnDetail(String empId) {
+        System.out.println("\n  === LUONG CUA TOI ===");
+        int month = main.readInt("  Thang (1-12): ");
+        int year  = main.readInt("  Nam (vd: 2024): ");
+
+        PayrollEntry entry = controller.getEntryByEmpAndMonth(empId, month, year);
+
+        if (entry == null) {
+            System.out.printf("  [!] Khong tim thay du lieu luong cua ban thang %d/%d.%n",
+                month, year);
+            return;
+        }
+
+        printEntryDetail(entry);
+    }
 }
