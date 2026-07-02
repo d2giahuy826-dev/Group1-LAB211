@@ -93,22 +93,6 @@ public class LeaveView {
         }
     }
 
-    private void viewBalance() {
-        System.out.println("\n  === SO DU NGHI PHEP ===");
-        String empId = main.readString("  Ma nhan vien: ");
-        LeaveBalance balance = controller.getBalance(empId);
-        if (balance == null) {
-            System.out.println("  [!] Khong tim thay so du phep cua nhan vien nay.");
-            return;
-        }
-        System.out.println("  ┌─────────────────────────────────────────┐");
-        System.out.printf( "  │  Phep nam : con %d / tong %d ngay         │%n",
-                balance.getAnnualRemaining(), balance.getAnnualTotal());
-        System.out.printf( "  │  Nghi om  : con %d / tong %d ngay         │%n",
-                balance.getSickRemaining(), balance.getSickTotal());
-        System.out.println("  └─────────────────────────────────────────┘");
-    }
-
     private void listPending() {
         System.out.println("\n  === DON NGHI PHEP CHO DUYET ===");
         List<LeaveRequest> list = controller.getPendingRequests();
