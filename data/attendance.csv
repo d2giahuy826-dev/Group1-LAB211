@@ -1,4 +1,3 @@
-attendId,empId,month,year,workDays,absenceDays,overtimeHours,lateCount
 ATT0000001,EMP0001,1,2024,18,3,19,2
 ATT0000002,EMP0001,2,2024,18,2,2,0
 ATT0000003,EMP0001,3,2024,22,1,10,2

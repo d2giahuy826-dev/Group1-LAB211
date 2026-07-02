@@ -228,7 +228,7 @@ public class MainView {
     String currentEmpId = authController.getCurrentUser().getId(); // với role EMPLOYEE, userId == empId
     switch (choice) {
         case 1: leaveView.viewOwnBalance(currentEmpId);                  break;
-        case 2: attendanceView.showEmployeeMenu();             break;
+        case 2: attendanceView.showEmployeeMenu(currentEmpId);             break;
         case 3: payrollView.showEmployeeMenu(currentEmpId);    break;
         default: System.out.println("  [!] Lua chon khong hop le.");
     }
