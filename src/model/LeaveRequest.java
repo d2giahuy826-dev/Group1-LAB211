@@ -1,5 +1,5 @@
 package model;
-
+import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
 
 /**
@@ -17,6 +17,8 @@ public class LeaveRequest extends BaseEntity {
     // ─── Fields ───────────────────────────────────────────────────────────────
 
     /** empId – khớp với cột "empId" trong CSV (DataGenerator dùng tên này) */
+    private final DateTimeFormatter dateFormatter =
+        DateTimeFormatter.ofPattern("M/d/yyyy");
     private String empId;
 
     private LeaveType type;
@@ -110,8 +112,8 @@ public class LeaveRequest extends BaseEntity {
         setId(parts[0].trim());
         setEmpId(parts[1].trim());
         setType(LeaveType.fromString(parts[2].trim()));
-        setStartDate(LocalDate.parse(parts[3].trim()));
-        setEndDate(LocalDate.parse(parts[4].trim()));
+        setStartDate(LocalDate.parse(parts[3].trim(), dateFormatter));
+        setEndDate(LocalDate.parse(parts[4].trim(), dateFormatter));
         setDays(Integer.parseInt(parts[5].trim()));
         setReason(parts[6].trim());
         setStatus(LeaveStatus.fromString(parts[7].trim()));
