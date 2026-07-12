@@ -147,12 +147,12 @@ public void viewOwnBalance(String empId) {
         System.out.println("  [!] Khong tim thay so du phep cua ban.");
         return;
     }
-    System.out.println("  ┌─────────────────────────────────────────┐");
-    System.out.printf( "  │  Phep nam : con %d / tong %d ngay         │%n",
+    System.out.println("  ---------------------------------------------");
+    System.out.printf( "  |  Phep nam : con %d / tong %d ngay    |%n",
             balance.getAnnualRemaining(), balance.getAnnualTotal());
-    System.out.printf( "  │  Nghi om  : con %d / tong %d ngay         │%n",
+    System.out.printf( "  |  Nghi om  : con %d / tong %d ngay    |%n",
             balance.getSickRemaining(), balance.getSickTotal());
-    System.out.println("  └─────────────────────────────────────────┘");
+    System.out.println("  ---------------------------------------------");
 }
     
 }

@@ -40,17 +40,17 @@ public class EmployeeView {
 
     // ─── Menu ─────────────────────────────────────────────────────────────────
     private void printMenu() {
-        System.out.println("\n┌──────────────────────────────────────────┐");
-        System.out.println(  "│          QUAN LY NHAN VIEN               │");
-        System.out.println(  "├──────────────────────────────────────────┤");
-        System.out.println(  "│  1. Them nhan vien                       │");
-        System.out.println(  "│  2. Tim nhan vien theo ma                │");
-        System.out.println(  "│  3. Tim nhan vien theo phong ban          │");
-        System.out.println(  "│  4. Cap nhat nhan vien                   │");
-        System.out.println(  "│  5. Xoa nhan vien                        │");
-        System.out.println(  "│  6. Xem tat ca nhan vien                 │");
-        System.out.println(  "│  0. Quay lai Menu chinh                  │");
-        System.out.println(  "└──────────────────────────────────────────┘");
+        System.out.println("\n------------------------------------------");
+        System.out.println(  "|          QUAN LY NHAN VIEN               |");
+        System.out.println(  "-------------------------------------------");
+        System.out.println(  "|  1. Them nhan vien                       |");
+        System.out.println(  "|  2. Tim nhan vien theo ma                |");
+        System.out.println(  "|  3. Tim nhan vien theo phong ban         |");
+        System.out.println(  "|  4. Cap nhat nhan vien                   |");
+        System.out.println(  "|  5. Xoa nhan vien                        |");
+        System.out.println(  "|  6. Xem tat ca nhan vien                 |");
+        System.out.println(  "|  0. Quay lai Menu chinh                  |");
+        System.out.println(  "-------------------------------------------");
 
     }
     // ─── Actions ──────────────────────────────────────────────────────────────
@@ -188,12 +188,12 @@ public class EmployeeView {
     // ─── Print helper ─────────────────────────────────────────────────────────
     private void printEmployee(Employee emp) {
         System.out.println("  -------------------------------------------");
-        System.out.printf( "  |  Ma NV     : %-27s|%n", emp.getId());
-        System.out.printf( "  |  Ho ten    : %-27s|%n", emp.getFullName());
-        System.out.printf( "  |  Phong ban : %-27s|%n", emp.getDeptId());
-        System.out.printf( "  |  Loai      : %-27s|%n", emp.getEmpType());
+        System.out.printf( "  |  Ma NV     : %-27s  |%n", emp.getId());
+        System.out.printf( "  |  Ho ten    : %-27s  |%n", emp.getFullName());
+        System.out.printf( "  |  Phong ban : %-27s  |%n", emp.getDeptId());
+        System.out.printf( "  |  Loai      : %-27s  |%n", emp.getEmpType());
         System.out.printf( "  |  Luong CB  : %,27.0f|%n", emp.getBaseSalary());
-        System.out.printf( "  |  Trang thai: %-27s|%n", emp.getStatus());
+        System.out.printf( "  |  Trang thai: %-27s  |%n", emp.getStatus());
         System.out.println("  -------------------------------------------");
     }
 }

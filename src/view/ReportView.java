@@ -61,12 +61,12 @@ public class ReportView {
         System.out.println("\n------------------------------------------");
         System.out.println(  "|         BAO CAO TONG KET                |");
         System.out.println(  "|-----------------------------------------|");
-        System.out.println(  "|  1. Bao cao tong ket luong thang         |");
-        System.out.println(  "|  2. Lich su cac dot chay luong           |");
-        System.out.println(  "|  3. Tong hop nhan vien                   |");
+        System.out.println(  "|  1. Bao cao tong ket luong thang        |");
+        System.out.println(  "|  2. Lich su cac dot chay luong          |");
+        System.out.println(  "|  3. Tong hop nhan vien                  |");
         System.out.println(  "|  4. Bao cao phong ban                   |");
         System.out.println(  "|  5. Bao cao cham cong                   |");
-        System.out.println(  "|  6. Xuat bao cao luong ra CSV            |");
+        System.out.println(  "|  6. Xuat bao cao luong ra CSV           |");
         System.out.println(  "|  0. Quay lai Menu chinh                 |");
         System.out.println(  "-------------------------------------------");
     }
@@ -96,16 +96,16 @@ public class ReportView {
             totalTax       += e.getTaxAmount();
         }
 
-        System.out.println("\n  " + "═".repeat(48));
+        System.out.println("\n  " + "-".repeat(48));
         System.out.printf( "  BAO CAO LUONG THANG %d/%d%n", month, year);
-        System.out.println("  " + "─".repeat(48));
+        System.out.println("  " + "-".repeat(48));
         System.out.printf( "  So nhan vien xu ly    : %d%n",      entries.size());
         System.out.printf( "  Tong thuong chuyen can: %,d VND%n", totalBonus);
         System.out.printf( "  Tong khau tru vang    : %,d VND%n", totalDeduction);
         System.out.printf( "  Tong thue TNCN        : %,d VND%n", totalTax);
-        System.out.println("  " + "─".repeat(48));
+        System.out.println("  " + "-".repeat(48));
         System.out.printf( "  TONG THUC NHAN        : %,d VND%n", totalNet);
-        System.out.println("  " + "═".repeat(48));
+        System.out.println("  " + "-".repeat(48));
         System.out.println();
     }
 

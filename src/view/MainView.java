@@ -207,8 +207,8 @@ public class MainView {
         System.out.println("|------------------------------------------|");
         System.out.println("|  1. Quan ly bang luong                   |");
         System.out.println("|     (Chay luong / Kiem toan / Lich su)   |");
-        System.out.println("|  2. Bao cao & xuat du lieu                |");
-        System.out.println("|  3. Xem danh sach cham cong (chi doc)     |");
+        System.out.println("|  2. Bao cao & xuat du lieu               |");
+        System.out.println("|  3. Xem danh sach cham cong (chi doc)    |");
         System.out.println("|  9. Dang xuat                            |");
         System.out.println("|  0. Thoat chuong trinh                   |");
         System.out.println("--------------------------------------------");
