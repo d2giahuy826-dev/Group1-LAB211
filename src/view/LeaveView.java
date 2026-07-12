@@ -33,7 +33,7 @@ public class LeaveView {
 
             int choice = main.readInt("Nhap lua chon: ");
             switch (choice) {
-                case 1: submitLeave();  break;
+                case 1: submitLeave(currentEmpId);  break;
                 case 2: viewOwnBalance(currentEmpId);  break;
                 case 0: back = true;    break;
                 default: System.out.println("  [!] Lua chon khong hop le.");
@@ -67,10 +67,10 @@ public class LeaveView {
 
     // ─── Actions ──────────────────────────────────────────────────────────────
 
-    private void submitLeave() {
+    private void submitLeave( String currentEmpId  ) {
         System.out.println("\n  === NOP DON XIN NGHI PHEP ===");
         try {
-            String empId = main.readString("  Ma nhan vien: ");
+            //String empId = main.readString("  Ma nhan vien: ");
 
             System.out.print("  Loai phep (ANNUAL/SICK): ");
             LeaveType type = LeaveType.fromString(main.getScanner().nextLine().trim());
@@ -85,7 +85,7 @@ public class LeaveView {
 
             String reason = main.readOptionalString("  Ly do (Enter de bo qua): ");
 
-            controller.submitLeave(empId, type, startDate, endDate, days, reason);
+            controller.submitLeave(currentEmpId, type, startDate, endDate, days, reason);
             System.out.println("  ✓ Da nop don nghi phep thanh cong!");
 
         } catch (Exception e) {

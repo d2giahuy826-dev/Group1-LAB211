@@ -38,9 +38,26 @@ public class LeaveController {
         if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("Ngày bắt đầu phải trước ngày kết thúc.");
         }
+         // Không cho phép tạo đơn cho ngày đã qua (ngày bắt đầu nghỉ ở quá khứ)
+        LocalDate today = LocalDate.now();
+        if (startDate.isBefore(today)) {
+            throw new IllegalArgumentException(
+                "Ngay bat dau nghi (" + startDate + ") da o trong qua khu "
+                + "(hom nay la " + today + "). Khong the tao don cho ngay da qua.");
+        }
+
+        // Đơn nghỉ phép phải được nộp trước ít nhất 2 ngày so với ngày bắt đầu nghỉ
+        long daysInAdvance = java.time.temporal.ChronoUnit.DAYS.between(today, startDate);
+        if (daysInAdvance < 2) {
+            throw new IllegalArgumentException(
+                "Dn nghi phep phai duoc nop truoc ngay bat dau nghi it nhat 2 ngay. "
+                + "Ngay bat dau nghi (" + startDate + ") chi cach hom nay ("
+                + today + ") " + daysInAdvance + " ngày.");
+        }
+
 
         // Tạo requestId tự động
-        String requestId = "REQ_" + empId + "_" + System.currentTimeMillis();
+        String requestId = generateNextRequestId();
 
         // Tạo LeaveRequest mới với status PENDING
         LeaveRequest request = new LeaveRequest(
@@ -131,4 +148,30 @@ public class LeaveController {
     public List<LeaveRequest> getPendingRequests() {
         return leaveRequestRepo.findByStatus(LeaveStatus.PENDING);
     }
+    private final String ID_PREFIX      = "LR";
+    private final int    ID_DIGIT_WIDTH = 6; // LR + 6 chữ số → VD: LR000001
+ 
+    /**
+     * Sinh requestId moi theo format: "LR" + so tang dan, luon giu du
+     * ID_DIGIT_WIDTH chu so (them so 0 phia truoc neu thieu).
+     * VD: LR000001, LR000002, ... LR123456.
+     *
+     * Cach tinh: quet toan bo requestId hien co trong file, lay ra phan so
+     * sau tien to "LR", tim so LON NHAT, roi +1. Neu chua co don nao dung
+     * dinh dang nay thi bat dau tu 1.
+     */
+    private String generateNextRequestId() {
+        int maxNumber = leaveRequestRepo.loadAll().stream()
+                .map(LeaveRequest::getId)
+                .filter(id -> id != null && id.startsWith(ID_PREFIX))
+                .map(id -> id.substring(ID_PREFIX.length()))
+                .filter(numPart -> numPart.chars().allMatch(Character::isDigit) && !numPart.isEmpty())
+                .mapToInt(Integer::parseInt)
+                .max()
+                .orElse(0);
+ 
+        int nextNumber = maxNumber + 1;
+        return ID_PREFIX + String.format("%0" + ID_DIGIT_WIDTH + "d", nextNumber);
+    }
+ 
 }

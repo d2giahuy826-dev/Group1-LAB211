@@ -1,5 +1,4 @@
 package model;
-import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
 
 /**
@@ -17,8 +16,6 @@ public class LeaveRequest extends BaseEntity {
     // ─── Fields ───────────────────────────────────────────────────────────────
 
     /** empId – khớp với cột "empId" trong CSV (DataGenerator dùng tên này) */
-    private final DateTimeFormatter dateFormatter =
-        DateTimeFormatter.ofPattern("M/d/yyyy");
     private String empId;
 
     private LeaveType type;
@@ -66,10 +63,6 @@ public class LeaveRequest extends BaseEntity {
 
     // ─── CsvMappable ─────────────────────────────────────────────────────────
 
-    /**
-     * Xuất ra dòng CSV đúng thứ tự 10 cột.
-     * approvedBy có thể rỗng nếu status=PENDING → để cột trống (không phải "null").
-     */
     @Override
     public String toCsvLine() {
         return String.join(",",
@@ -86,21 +79,10 @@ public class LeaveRequest extends BaseEntity {
         );
     }
 
-    /**
-     * Parse từ dòng CSV (10 cột).
-     * Format: requestId,empId,leaveType,startDate,endDate,
-     *         days,reason,status,approvedBy,createdAt
-     *
-     * FIX so với model gốc:
-     *  - Dùng split(",", -1) để giữ cột rỗng (approvedBy khi PENDING)
-     *  - Parse đủ 10 cột thay vì 6
-     *  - Validate số cột
-     */
     @Override
     public void fromCsvLine(String line) {
         validateRequired(line, "CSV line");
 
-        // -1 giữ nguyên cột rỗng ở cuối (approvedBy, createdAt có thể trống)
         String[] parts = line.split(",", -1);
 
         if (parts.length != 10) {
@@ -112,36 +94,25 @@ public class LeaveRequest extends BaseEntity {
         setId(parts[0].trim());
         setEmpId(parts[1].trim());
         setType(LeaveType.fromString(parts[2].trim()));
-        setStartDate(LocalDate.parse(parts[3].trim(), dateFormatter));
-        setEndDate(LocalDate.parse(parts[4].trim(), dateFormatter));
+        setStartDate(LocalDate.parse(parts[3].trim()));
+        setEndDate(LocalDate.parse(parts[4].trim()));
         setDays(Integer.parseInt(parts[5].trim()));
         setReason(parts[6].trim());
         setStatus(LeaveStatus.fromString(parts[7].trim()));
-        setApprovedBy(parts[8].trim());   // "" nếu PENDING — không ném exception
+        setApprovedBy(parts[8].trim());
         setCreatedAt(parts[9].trim());
     }
 
     // ─── Business Logic ───────────────────────────────────────────────────────
 
-    /**
-     * Kiểm tra đơn nghỉ phép đã được duyệt chưa.
-     */
     public boolean isApproved() {
         return status == LeaveStatus.APPROVED;
     }
 
-    /**
-     * Kiểm tra đơn đang chờ xử lý.
-     */
     public boolean isPending() {
         return status == LeaveStatus.PENDING;
     }
 
-    /**
-     * Duyệt đơn nghỉ phép – cập nhật status và approvedBy.
-     *
-     * @param approverId ID người duyệt (ví dụ: "EMP0001")
-     */
     public void approve(String approverId) {
         if (status != LeaveStatus.PENDING) {
             throw new IllegalStateException(
@@ -151,11 +122,6 @@ public class LeaveRequest extends BaseEntity {
         this.approvedBy = approverId;
     }
 
-    /**
-     * Từ chối đơn nghỉ phép.
-     *
-     * @param approverId ID người từ chối
-     */
     public void reject(String approverId) {
         if (status != LeaveStatus.PENDING) {
             throw new IllegalStateException(
@@ -167,9 +133,6 @@ public class LeaveRequest extends BaseEntity {
 
     // ─── Helper ───────────────────────────────────────────────────────────────
 
-    /**
-     * Escape dấu phẩy trong reason (nếu có) để không phá vỡ CSV.
-     */
     private String escapeCsv(String value) {
         if (value == null) return "";
         if (value.contains(",") || value.contains("\"")) {
@@ -180,7 +143,6 @@ public class LeaveRequest extends BaseEntity {
 
     // ─── Getters / Setters ────────────────────────────────────────────────────
 
-    /** @deprecated dùng getEmpId() thay cho getEmployeeId() cho nhất quán với CSV */
     @Deprecated
     public String getEmployeeId() { return empId; }
 
