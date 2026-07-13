@@ -152,6 +152,9 @@ public class ReportView {
         long approvedLeaves = leaveRequests.stream()
                 .filter(r -> r.getStatus() == LeaveStatus.APPROVED)
                 .count();
+        long rejectedLeaves = leaveRequests.stream()
+                .filter(r -> r.getStatus() == LeaveStatus.REJECTED)
+                .count();        
 
         System.out.println("\n  " + "-".repeat(40));
         System.out.println("  TONG HOP NHAN VIEN & NGHI PHEP");
@@ -163,8 +166,8 @@ public class ReportView {
         System.out.printf( "  Tong don phep   : %d%n", leaveRequests.size());
         System.out.printf( "  Cho duyet       : %d%n", pendingLeaves);
         System.out.printf( "  Da duyet        : %d%n", approvedLeaves);
+        System.out.printf("  Da tu choi      : %d%n", rejectedLeaves);
         System.out.println("  " + "-".repeat(40));
-        System.out.println();
     }
 
     // ─── Report 4: Báo cáo phòng ban ──────────────────────────────────────────
