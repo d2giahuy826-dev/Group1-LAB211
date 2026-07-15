@@ -81,7 +81,8 @@ public class LeaveView {
             String endStr = main.readString("  Ngay ket thuc (yyyy-MM-dd): ");
             LocalDate endDate = LocalDate.parse(endStr);
 
-            int days = main.readInt("  So ngay nghi: ");
+            int days = (int) java.time.temporal.ChronoUnit.DAYS.between(startDate, endDate) + 1;
+            System.out.println("  So ngay nghi (tu tinh): " + days + " ngay");
 
             String reason = main.readOptionalString("  Ly do (Enter de bo qua): ");
 
