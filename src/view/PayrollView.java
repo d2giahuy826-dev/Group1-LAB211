@@ -89,8 +89,35 @@ public class PayrollView {
             printRunSummary(result);
         } catch (IllegalStateException e) {
             System.out.println("  [!] " + e.getMessage());
+            confirmAndForceRerun(month, year);
         } catch (Exception e) {
             System.out.println("  [!] Loi: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Khi PayrollRun cua thang/nam da COMPLETED, hoi nguoi dung co muon
+     * CHAY LAI (force) khong. Neu dong y, cac entry da co se duoc TINH LAI
+     * va CAP NHAT tai cho (giu nguyen entryId, tang version) thay vi bi
+     * bo qua hay xoa — tuc la giu lich su, khong tao du lieu trung lap.
+     */
+    private void confirmAndForceRerun(int month, int year) {
+        String answer = main.readString(
+            "  Ban co muon CHAY LAI bang luong " + month + "/" + year
+            + " khong? Du lieu cu se duoc TINH LAI VA CAP NHAT (y/n): ");
+
+        if (!answer.trim().equalsIgnoreCase("y")) {
+            System.out.println("  Da huy chay lai.");
+            return;
+        }
+
+        System.out.printf("  Dang chay lai (force) bang luong %d/%d...%n", month, year);
+        try {
+            PayrollController.RunResult result = controller.runPayroll(month, year, true);
+            System.out.println("\n  ✓ Da chay lai va cap nhat thanh cong!");
+            printRunSummary(result);
+        } catch (Exception ex) {
+            System.out.println("  [!] Loi khi chay lai: " + ex.getMessage());
         }
     }
 
@@ -201,21 +228,21 @@ public class PayrollView {
     }
 
     private void printEntryDetail(PayrollEntry e) {
-        System.out.println("\n  ┌─────────────────────────────────────────┐");
-        System.out.printf( "  │  CHI TIET LUONG: %-24s│%n", e.getEmpId());
-        System.out.println("  ├─────────────────────────────────────────┤");
-        System.out.printf( "  │  Phong ban     : %-24s│%n", e.getDeptId());
-        System.out.printf( "  │  Thang/Nam     : %02d/%-21d│%n", e.getMonth(), e.getYear());
-        System.out.println("  ├─────────────────────────────────────────┤");
-        System.out.printf( "  │  Luong co ban  : %,24d │%n", e.getBaseSalary());
-        System.out.printf( "  │  Lương OT      : %,24d │%n", e.getOvertimePay());
-        System.out.printf( "  │  Thuong chuyen can: %,21d │%n", e.getBonus());
-        System.out.printf( "  │  Khau tru vang : %,24d │%n", e.getAbsenceDeduction());
-        System.out.printf( "  │  Thue TNCN     : %,24d │%n", e.getTaxAmount());
-        System.out.println("  ├─────────────────────────────────────────┤");
-        System.out.printf( "  │  LUONG THUC NHAN: %,23d │%n", e.getNetSalary());
-        System.out.printf( "  │  Trang thai    : %-24s│%n", e.getStatus());
-        System.out.println("  └─────────────────────────────────────────┘");
+        System.out.println("\n----------------------------------------------");
+        System.out.printf( "|  CHI TIET LUONG: %-24s  |%n", e.getEmpId());
+        System.out.println("----------------------------------------------");
+        System.out.printf( "|  Phong ban     : %-24s  |%n", e.getDeptId());
+        System.out.printf( "|  Thang/Nam     : %02d/%-21d  |%n", e.getMonth(), e.getYear());
+        System.out.println("----------------------------------------------");
+        System.out.printf( "|  Luong co ban  : %,24d  |%n", e.getBaseSalary());
+        System.out.printf( "|  Lương OT      : %,24d  |%n", e.getOvertimePay());
+        System.out.printf( "|  Thuong chuyen can: %,21d  |%n", e.getBonus());
+        System.out.printf( "|  Khau tru vang : %,24d  |%n", e.getAbsenceDeduction());
+        System.out.printf( "|  Thue TNCN     : %,24d  |%n", e.getTaxAmount());
+        System.out.println("----------------------------------------------");
+        System.out.printf( "|  LUONG THUC NHAN: %,23d  |%n", e.getNetSalary());
+        System.out.printf( "|  Trang thai    : %-24s  |%n", e.getStatus());
+        System.out.println("----------------------------------------------");
         System.out.println();
     }
     /**

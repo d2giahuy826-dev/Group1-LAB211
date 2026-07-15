@@ -53,14 +53,34 @@ public class PayrollController {
 
     // ─── Main use case ────────────────────────────────────────────────────────
 
+    /**
+     * Chay bang luong binh thuong (khong force).
+     * Neu run cho thang/nam nay da COMPLETED -> throw IllegalStateException.
+     */
     public RunResult runPayroll(int month, int year) {
-        PayrollRun run = resolvePayrollRun(month, year);
+        return runPayroll(month, year, false);
+    }
+
+    /**
+     * Chay bang luong voi tuy chon force.
+     *
+     * @param force neu true:
+     *              - Run da COMPLETED se duoc "mo lai" (PENDING) thay vi bi chan.
+     *              - Entry da ton tai cho nhan vien/thang/nam do se duoc TINH LAI
+     *                va UPDATE tai cho (giu nguyen entryId, tang version),
+     *                thay vi bi bo qua (skip) nhu truoc.
+     *              neu false: giu nguyen hanh vi cu (run COMPLETED bi chan,
+     *              entry da ton tai bi skip).
+     */
+    public RunResult runPayroll(int month, int year, boolean force) {
+        PayrollRun run = resolvePayrollRun(month, year, force);
         String today = LocalDate.now().format(DATE_FMT);
 
         List<Employee> employees = employeeRepo.loadAll();
 
         long totalNetPay    = 0L;
-        int  processedCount = 0;
+        int  processedCount = 0; // entry moi (chua tung ton tai)
+        int  updatedCount   = 0; // entry cu duoc cap nhat lai (chi khi force = true)
         int  skippedCount   = 0;
 
         for (Employee emp : employees) {
@@ -70,7 +90,10 @@ public class PayrollController {
             }
 
             String entryId = buildEntryId(emp.getId(), month, year);
-            if (isAlreadyProcessed(entryId)) {
+            PayrollEntry existing = payrollEntryRepo.findById(entryId);
+
+            if (existing != null && !force) {
+                // Da co entry va khong force -> giu hanh vi cu: bo qua
                 skippedCount++;
                 continue;
             }
@@ -89,27 +112,35 @@ public class PayrollController {
 
             PayrollEntry entry = buildEntry(entryId, emp, month, year, calc, today);
 
-            try {
-                payrollEntryRepo.save(entry);
-            } catch (DuplicatePaymentException e) {
-                skippedCount++;
-                continue;
+            if (existing != null) {
+                // force = true va da co entry cu -> UPDATE tai cho, giu lich su ID,
+                // tang version de biet entry nay da duoc tinh lai bao nhieu lan.
+                entry.setVersion(existing.getVersion() + 1);
+                payrollEntryRepo.update(entry);
+                updatedCount++;
+            } else {
+                try {
+                    payrollEntryRepo.save(entry);
+                } catch (DuplicatePaymentException e) {
+                    skippedCount++;
+                    continue;
+                }
+                processedCount++;
             }
 
             totalNetPay += calc.getNetSalary();
-            processedCount++;
         }
 
-        run.setTotalEmployees(processedCount);
+        run.setTotalEmployees(processedCount + updatedCount);
         run.setTotalNetPay(totalNetPay);
         run.markCompleted(today);
         payrollRunRepo.update(run);
 
         System.out.printf(
-            "[PayrollController] runPayroll(%d/%d) → processed=%d, skipped=%d, totalNetPay=%,d%n",
-            month, year, processedCount, skippedCount, totalNetPay);
+            "[PayrollController] runPayroll(%d/%d, force=%b) -> moi=%d, capNhat=%d, boQua=%d, totalNetPay=%,d%n",
+            month, year, force, processedCount, updatedCount, skippedCount, totalNetPay);
 
-        return new RunResult(run.getId(), processedCount, skippedCount, totalNetPay);
+        return new RunResult(run.getId(), processedCount + updatedCount, skippedCount, totalNetPay);
     }
 
     // ─── Query methods cho PayrollView ───────────────────────────────────────
@@ -182,15 +213,26 @@ public class PayrollController {
 
     // ─── Helpers ─────────────────────────────────────────────────────────────
 
-    private PayrollRun resolvePayrollRun(int month, int year) {
+    /**
+     * Tim hoac tao PayrollRun cho thang/nam.
+     *
+     * @param force neu true va run da COMPLETED, se "mo lai" run ve PENDING
+     *              thay vi throw exception, cho phep chay lai.
+     */
+    private PayrollRun resolvePayrollRun(int month, int year, boolean force) {
         Optional<PayrollRun> existing = payrollRunRepo.findByMonthAndYear(month, year);
 
         if (existing.isPresent()) {
             PayrollRun run = existing.get();
             if (run.isCompleted()) {
-                throw new IllegalStateException(
-                    "PayrollRun cho tháng " + month + "/" + year
-                    + " đã COMPLETED. Không thể chạy lại.");
+                if (!force) {
+                    throw new IllegalStateException(
+                        "PayrollRun cho tháng " + month + "/" + year
+                        + " đã COMPLETED. Không thể chạy lại.");
+                }
+                // force = true: mo lai run de cho phep chay lai / cap nhat
+                run.setStatus(RunStatus.PENDING);
+                run.setCompletedAt("");
             }
             return run;
         }
@@ -206,10 +248,6 @@ public class PayrollController {
 
     private String buildEntryId(String empId, int month, int year) {
         return "PE_" + empId + "_" + month + "_" + year;
-    }
-
-    private boolean isAlreadyProcessed(String entryId) {
-        return payrollEntryRepo.findById(entryId) != null;
     }
 
     private AttendanceRecord findAttendance(String empId, int month, int year) {
