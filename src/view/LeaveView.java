@@ -42,7 +42,7 @@ public class LeaveView {
     }
 
     // ─── Menu cho HR Staff ────────────────────────────────────────────────────
-    public void showHrMenu() {
+    public void showHrMenu( String currentEmpId ) {
         boolean back = false;
         while (!back) {
             System.out.println("\n--------------------------------------------");
@@ -57,8 +57,8 @@ public class LeaveView {
             int choice = main.readInt("Nhap lua chon: ");
             switch (choice) {
                 case 1: listPending();      break;
-                case 2: approveLeave();     break;
-                case 3: rejectLeave();      break;
+                case 2: approveLeave(currentEmpId);     break;
+                case 3: rejectLeave(currentEmpId);      break;
                 case 0: back = true;        break;
                 default: System.out.println("  [!] Lua chon khong hop le.");
             }
@@ -106,11 +106,11 @@ public class LeaveView {
             r.getStartDate(), r.getEndDate(), r.getDays(), r.getReason()));
     }
 
-    private void approveLeave() {
+    private void approveLeave(String currentEmpId) {
         System.out.println("\n  === DUYET DON NGHI PHEP ===");
         try {
             String requestId = main.readString("  Ma don nghi phep: ");
-            String approverId = main.readString("  Ma nguoi duyet: ");
+            String approverId = currentEmpId;
 
             controller.approve(requestId, approverId);
             System.out.println("  ✓ Da duyet don nghi phep thanh cong!");
@@ -122,11 +122,11 @@ public class LeaveView {
         }
     }
 
-    private void rejectLeave() {
+    private void rejectLeave(String currentEmpId) {
         System.out.println("\n  === TU CHOI DON NGHI PHEP ===");
         try {
             String requestId  = main.readString("  Ma don nghi phep: ");
-            String approverId = main.readString("  Ma nguoi tu choi: ");
+            String approverId = currentEmpId;
 
             controller.reject(requestId, approverId);
             System.out.println("  ✓ Da tu choi don nghi phep!");

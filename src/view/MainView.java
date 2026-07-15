@@ -235,10 +235,11 @@ public class MainView {
 }
 
     private void handleHrChoice(int choice) {
+         String currentUserId = authController.getCurrentUser().getId();
         switch (choice) {
             case 1: employeeView.show();          break;
             case 2: departmentView.show();        break;
-            case 3: leaveView.showHrMenu();       break;
+            case 3: leaveView.showHrMenu(currentUserId);       break;
             case 4: attendanceView.showHrMenu();  break;
             case 5: reportView.show();            break;
             default: System.out.println("  [!] Lua chon khong hop le.");
