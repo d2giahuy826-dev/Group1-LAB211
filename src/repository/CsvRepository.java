@@ -9,6 +9,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Predicate;
+import util.ProjectPath;
 
 /**
  * CsvRepository<T> – Abstract generic base class cho tầng Repository.
@@ -61,7 +62,7 @@ public abstract class CsvRepository<T extends BaseEntity> {
     public List<T> loadAll() {
         readLock.lock();
         try {
-            Path path = Paths.get(getFilePath());
+            Path path = ProjectPath.resolve(getFilePath());
 
             if (!Files.exists(path)) {
                 throw new CsvParseException(
@@ -120,8 +121,8 @@ public abstract class CsvRepository<T extends BaseEntity> {
 
         writeLock.lock();
         try {
-            Path targetPath = Paths.get(getFilePath());
-            Path tempPath   = Paths.get(getFilePath() + ".tmp");
+            Path targetPath = ProjectPath.resolve(getFilePath());
+            Path tempPath   = Path.of(targetPath.toString() + ".tmp");
 
             // Đảm bảo thư mục tồn tại
             if (targetPath.getParent() != null) {
@@ -270,7 +271,7 @@ public abstract class CsvRepository<T extends BaseEntity> {
      * Kiểm tra file CSV có tồn tại không.
      */
     public boolean fileExists() {
-        return Files.exists(Paths.get(getFilePath()));
+        return Files.exists(ProjectPath.resolve(getFilePath()));
     }
 // ─── CREATE ─────────────────────────────────────────────────────
 

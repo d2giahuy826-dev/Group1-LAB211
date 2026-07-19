@@ -13,7 +13,7 @@ import java.util.Optional;
  */
 public class UserRepository extends CsvRepository<User> {
  
-    private static final String FILE_PATH = "data/users.csv";
+    private static final String FILE_PATH = "data/Users.csv";
     private static final String HEADER = "userId,username,password,role";
  
     @Override

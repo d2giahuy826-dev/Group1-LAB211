@@ -7,9 +7,19 @@ import java.util.Optional;
 
 public class LeaveBalanceRepository extends CsvRepository<LeaveBalance> {
 
+    private final String filePath;
+
+    public LeaveBalanceRepository() {
+        this("data/leave_balance.csv");
+    }
+
+    public LeaveBalanceRepository(String filePath) {
+        this.filePath = filePath;
+    }
+
     @Override
     protected String getFilePath() {
-        return "data/leave_balance.csv";
+        return filePath;
     }
 
     @Override
@@ -38,7 +48,9 @@ public class LeaveBalanceRepository extends CsvRepository<LeaveBalance> {
 
     // Đã sửa để trả về LeaveBalance thay vì Optional, giúp khớp với file Test
     public LeaveBalance findByEmployeeId(String id) {
-        return findById(id).orElse(null);
+        return loadAll().stream()
+                .filter(balance -> id.equals(balance.getEmpId()))
+                .findFirst().orElse(null);
     }
 
     // --- CÁC HÀM NGHIỆP VỤ ---

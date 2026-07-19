@@ -6,6 +6,7 @@ import controller.DepartmentController;
 import controller.EmployeeController;
 import controller.LeaveController;
 import controller.PayrollController;
+import controller.SimulatorController;
 import model.User;
 import model.UserRole;
 
@@ -50,6 +51,7 @@ public class MainView {
     private final AuthController       authController;
     private final DepartmentController departmentController;
     private final AttendanceController attendanceController;
+    private final SimulatorController  simulatorController;
     private final Scanner              scanner;
 
     // Sub-views — khởi tạo lazy để tránh circular dependency
@@ -59,6 +61,7 @@ public class MainView {
     private ReportView     reportView;
     private DepartmentView departmentView;
     private AttendanceView attendanceView;
+    private SimulatorView  simulatorView;
 
     // ─── Constructor ─────────────────────────────────────────────────────────
 
@@ -67,13 +70,15 @@ public class MainView {
                     EmployeeController employeeController,
                     AuthController authController,
                     DepartmentController departmentController,
-                    AttendanceController attendanceController) {
+                    AttendanceController attendanceController,
+                    SimulatorController simulatorController) {
         this.payrollController    = payrollController;
         this.leaveController      = leaveController;
         this.employeeController   = employeeController;
         this.authController       = authController;
         this.departmentController = departmentController;
         this.attendanceController = attendanceController;
+        this.simulatorController  = simulatorController;
         this.scanner               = new Scanner(System.in);
     }
 
@@ -196,6 +201,7 @@ public class MainView {
         System.out.println("|  4. Quan ly cham cong                    |");
         System.out.println("|     (Xem tong hop / Duyet dieu chinh)    |");
         System.out.println("|  5. Bao cao tong ket                     |");
+        System.out.println("|  6. Mo phong dong thoi (Task 8)          |");
         System.out.println("|  9. Dang xuat                            |");
         System.out.println("|  0. Thoat chuong trinh                   |");
         System.out.println("--------------------------------------------");
@@ -209,6 +215,7 @@ public class MainView {
         System.out.println("|     (Chay luong / Kiem toan / Lich su)   |");
         System.out.println("|  2. Bao cao & xuat du lieu                |");
         System.out.println("|  3. Xem danh sach cham cong (chi doc)     |");
+        System.out.println("|  4. Mo phong dong thoi (Task 8)           |");
         System.out.println("|  9. Dang xuat                            |");
         System.out.println("|  0. Thoat chuong trinh                   |");
         System.out.println("--------------------------------------------");
@@ -240,6 +247,7 @@ public class MainView {
             case 3: leaveView.showHrMenu();       break;
             case 4: attendanceView.showHrMenu();  break;
             case 5: reportView.show();            break;
+            case 6: simulatorView.show();          break;
             default: System.out.println("  [!] Lua chon khong hop le.");
         }
     }
@@ -249,6 +257,7 @@ public class MainView {
             case 1: payrollView.show();               break;
             case 2: reportView.show();                break;
             case 3: attendanceView.showReadOnlyMenu(); break;
+            case 4: simulatorView.show();              break;
             default: System.out.println("  [!] Lua chon khong hop le.");
         }
     }
@@ -304,5 +313,6 @@ public class MainView {
         this.attendanceView = new AttendanceView(attendanceController, this);
         this.reportView     = new ReportView(
                 payrollController, departmentController, attendanceController, this);
+        this.simulatorView  = new SimulatorView(simulatorController, this);
     }
 }

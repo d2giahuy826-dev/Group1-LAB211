@@ -4,6 +4,7 @@ import controller.DepartmentController;
 import controller.EmployeeController;
 import controller.LeaveController;
 import controller.PayrollController;
+import controller.SimulatorController;
 import repository.*;
 import view.MainView;
  
@@ -42,11 +43,14 @@ public class Main {
         DepartmentController departmentController = new DepartmentController();
  
         AttendanceController attendanceController = new AttendanceController();
+
+        SimulatorController simulatorController = new SimulatorController(
+                leaveBalanceRepo, leaveRequestRepo);
  
         // ─── 3. View layer ───────────────────────────────────────────────────
         MainView mainView = new MainView(
                 payrollController, leaveController, employeeController, authController,
-                departmentController, attendanceController);
+                departmentController, attendanceController, simulatorController);
         mainView.start();
     }
 }

@@ -5,16 +5,18 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import util.ProjectPath;
 
 public class AttendanceRepository {
-    private final String FILE_PATH = "data/attendance.csv";
+    private final String filePath;
 
     public AttendanceRepository() {
+        this.filePath = ProjectPath.resolve("data/attendance.csv").toString();
         ensureFileExists();
     }
 
     private void ensureFileExists() {
-        File file = new File(FILE_PATH);
+        File file = new File(filePath);
         if (!file.exists()) {
             try {
                 file.getParentFile().mkdirs();
@@ -27,7 +29,7 @@ public class AttendanceRepository {
 
     public List<AttendanceRecord> getAll() {
         List<AttendanceRecord> list = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
@@ -48,7 +50,7 @@ public class AttendanceRepository {
     }
 
     public void saveAll(List<AttendanceRecord> list) {
-        try (PrintWriter pw = new PrintWriter(new FileWriter(FILE_PATH))) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(filePath))) {
             for (AttendanceRecord record : list) {
                 pw.println(record.toCsvLine());
             }
