@@ -40,7 +40,7 @@ public class PayrollView {
      * Menu rut gon cho Employee — chi xem luong cua chinh minh,
      * khong duoc chay bang luong hay xem bao cao toan cong ty.
      */
-    public void showEmployeeMenu() {
+    public void showEmployeeMenu(String currentEmpId) {
         boolean back = false;
         while (!back) {
             System.out.println("\n--------------------------------------------");
@@ -51,7 +51,7 @@ public class PayrollView {
             System.out.println(  "--------------------------------------------");
             int choice = main.readInt("Nhap lua chon: ");
             switch (choice) {
-                case 1: viewEmployeeDetail(); break;
+                case 1: viewOwnDetail(currentEmpId); break;
                 case 0: back = true;          break;
                 default: System.out.println("  [!] Lua chon khong hop le.");
             }
@@ -218,4 +218,30 @@ public class PayrollView {
         System.out.println("  └─────────────────────────────────────────┘");
         System.out.println();
     }
+    /**
+     * Dung rieng cho Employee — empId LAY TU SESSION dang nhap,
+     * KHONG cho nhap tay de tranh xem luong nguoi khac.
+     */
+    private void viewOwnDetail(String empId) {
+        System.out.println("\n  === LUONG CUA TOI ===");
+        int month = main.readInt("  Thang (1-12): ");
+        int year  = main.readInt("  Nam (vd: 2024): ");
+
+        PayrollEntry entry = controller.getEntryByEmpAndMonth(empId, month, year);
+
+        if (entry == null) {
+            System.out.printf("  [!] Khong tim thay du lieu luong cua ban thang %d/%d.%n",
+                month, year);
+            return;
+        }
+
+        printEntryDetail(entry);
+    }
+    /**
+     * Menu rut gon cho Employee — chi xem luong cua CHINH MINH.
+     *
+     * @param currentEmpId empId cua user dang dang nhap (lay tu AuthController,
+     *                      KHONG duoc hoi lai tu ban phim de tranh xem duoc
+     *                      luong cua nguoi khac).
+     */
 }

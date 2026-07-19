@@ -17,7 +17,7 @@ public class AttendanceView {
     }
 
     // ─── Menu cho Employee ────────────────────────────────────────────────────
-    public void showEmployeeMenu() {
+    public void showEmployeeMenu(String currentEmpId) {
         boolean back = false;
         while (!back) {
             System.out.println("\n--------------------------------------------");
@@ -31,10 +31,10 @@ public class AttendanceView {
             System.out.println(  "--------------------------------------------");
             int choice = main.readInt("Nhap lua chon: ");
             switch (choice) {
-                case 1: checkIn();          break;
-                case 2: checkOut();         break;
-                case 3: viewMyAttendance(); break;
-                case 4: submitAdjustment(); break;
+                case 1: checkIn(currentEmpId);          break;
+                case 2: checkOut(currentEmpId);         break;
+                case 3: viewMyAttendance(currentEmpId); break;
+                case 4: submitAdjustment(currentEmpId); break;
                 case 0: back = true;        break;
                 default: System.out.println("  [!] Lua chon khong hop le.");
             }
@@ -91,25 +91,24 @@ public class AttendanceView {
 
     // ─── Actions ─────────────────────────────────────────────────────────────
 
-    private void checkIn() {
-        String empId = main.readString("  Ma nhan vien: ");
+    private void checkIn(String currentEmpId) {
+        
         try {
-            AttendanceRecord r = controller.checkIn(empId);
+            AttendanceRecord r = controller.checkIn(currentEmpId);
             System.out.println("  ✓ Check in thanh cong. Ngay cong thang nay: " + r.getWorkDays());
         } catch (Exception e) {
             System.out.println("  [!] Loi: " + e.getMessage());
         }
     }
 
-    private void checkOut() {
-        String empId = main.readString("  Ma nhan vien: ");
-        controller.checkOut(empId);
+    private void checkOut(String currentEmpId) {
+
+        controller.checkOut(currentEmpId);
         System.out.println("  ✓ Check out thanh cong.");
     }
 
-    private void viewMyAttendance() {
-        String empId = main.readString("  Ma nhan vien: ");
-        List<AttendanceRecord> list = controller.findByEmployeeId(empId);
+    private void viewMyAttendance(String currentEmpId) {
+        List<AttendanceRecord> list = controller.findByEmployeeId(currentEmpId);
         if (list.isEmpty()) {
             System.out.println("  [!] Chua co du lieu cham cong.");
             return;
@@ -120,9 +119,9 @@ public class AttendanceView {
             r.getOvertimeHours(), r.getLateCount()));
     }
 
-    private void submitAdjustment() {
+    private void submitAdjustment(String currentEmpId) {
         try {
-            String empId       = main.readString("  Ma nhan vien: ");
+            String empId       = currentEmpId;
             int month           = main.readInt("  Thang (1-12): ");
             int year             = main.readInt("  Nam: ");
             int workDays         = main.readInt("  So ngay cong de nghi: ");

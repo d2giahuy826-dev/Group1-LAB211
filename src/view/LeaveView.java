@@ -20,7 +20,7 @@ public class LeaveView {
     }
 
     // ─── Menu cho Employee ────────────────────────────────────────────────────
-    public void showEmployeeMenu() {
+    public void showEmployeeMenu(String currentEmpId) {
         boolean back = false;
         while (!back) {
             System.out.println("\n--------------------------------------------");
@@ -33,8 +33,8 @@ public class LeaveView {
 
             int choice = main.readInt("Nhap lua chon: ");
             switch (choice) {
-                case 1: submitLeave();  break;
-                case 2: viewBalance();  break;
+                case 1: submitLeave(currentEmpId);  break;
+                case 2: viewOwnBalance(currentEmpId);  break;
                 case 0: back = true;    break;
                 default: System.out.println("  [!] Lua chon khong hop le.");
             }
@@ -42,7 +42,7 @@ public class LeaveView {
     }
 
     // ─── Menu cho HR Staff ────────────────────────────────────────────────────
-    public void showHrMenu() {
+    public void showHrMenu( String currentEmpId ) {
         boolean back = false;
         while (!back) {
             System.out.println("\n--------------------------------------------");
@@ -57,8 +57,8 @@ public class LeaveView {
             int choice = main.readInt("Nhap lua chon: ");
             switch (choice) {
                 case 1: listPending();      break;
-                case 2: approveLeave();     break;
-                case 3: rejectLeave();      break;
+                case 2: approveLeave(currentEmpId);     break;
+                case 3: rejectLeave(currentEmpId);      break;
                 case 0: back = true;        break;
                 default: System.out.println("  [!] Lua chon khong hop le.");
             }
@@ -67,10 +67,10 @@ public class LeaveView {
 
     // ─── Actions ──────────────────────────────────────────────────────────────
 
-    private void submitLeave() {
+    private void submitLeave( String currentEmpId  ) {
         System.out.println("\n  === NOP DON XIN NGHI PHEP ===");
         try {
-            String empId = main.readString("  Ma nhan vien: ");
+            //String empId = main.readString("  Ma nhan vien: ");
 
             System.out.print("  Loai phep (ANNUAL/SICK): ");
             LeaveType type = LeaveType.fromString(main.getScanner().nextLine().trim());
@@ -81,32 +81,17 @@ public class LeaveView {
             String endStr = main.readString("  Ngay ket thuc (yyyy-MM-dd): ");
             LocalDate endDate = LocalDate.parse(endStr);
 
-            int days = main.readInt("  So ngay nghi: ");
+            int days = (int) java.time.temporal.ChronoUnit.DAYS.between(startDate, endDate) + 1;
+            System.out.println("  So ngay nghi (tu tinh): " + days + " ngay");
 
             String reason = main.readOptionalString("  Ly do (Enter de bo qua): ");
 
-            controller.submitLeave(empId, type, startDate, endDate, days, reason);
+            controller.submitLeave(currentEmpId, type, startDate, endDate, days, reason);
             System.out.println("  ✓ Da nop don nghi phep thanh cong!");
 
         } catch (Exception e) {
             System.out.println("  [!] Loi: " + e.getMessage());
         }
-    }
-
-    private void viewBalance() {
-        System.out.println("\n  === SO DU NGHI PHEP ===");
-        String empId = main.readString("  Ma nhan vien: ");
-        LeaveBalance balance = controller.getBalance(empId);
-        if (balance == null) {
-            System.out.println("  [!] Khong tim thay so du phep cua nhan vien nay.");
-            return;
-        }
-        System.out.println("  ┌─────────────────────────────────────────┐");
-        System.out.printf( "  │  Phep nam : con %d / tong %d ngay         │%n",
-                balance.getAnnualRemaining(), balance.getAnnualTotal());
-        System.out.printf( "  │  Nghi om  : con %d / tong %d ngay         │%n",
-                balance.getSickRemaining(), balance.getSickTotal());
-        System.out.println("  └─────────────────────────────────────────┘");
     }
 
     private void listPending() {
@@ -122,11 +107,11 @@ public class LeaveView {
             r.getStartDate(), r.getEndDate(), r.getDays(), r.getReason()));
     }
 
-    private void approveLeave() {
+    private void approveLeave(String currentEmpId) {
         System.out.println("\n  === DUYET DON NGHI PHEP ===");
         try {
             String requestId = main.readString("  Ma don nghi phep: ");
-            String approverId = main.readString("  Ma nguoi duyet: ");
+            String approverId = currentEmpId;
 
             controller.approve(requestId, approverId);
             System.out.println("  ✓ Da duyet don nghi phep thanh cong!");
@@ -138,11 +123,11 @@ public class LeaveView {
         }
     }
 
-    private void rejectLeave() {
+    private void rejectLeave(String currentEmpId) {
         System.out.println("\n  === TU CHOI DON NGHI PHEP ===");
         try {
             String requestId  = main.readString("  Ma don nghi phep: ");
-            String approverId = main.readString("  Ma nguoi tu choi: ");
+            String approverId = currentEmpId;
 
             controller.reject(requestId, approverId);
             System.out.println("  ✓ Da tu choi don nghi phep!");
@@ -151,4 +136,24 @@ public class LeaveView {
             System.out.println("  [!] Loi: " + e.getMessage());
         }
     }
+    /**
+ * Dung rieng cho Employee — empId LAY TU SESSION dang nhap,
+ * KHONG cho nhap tay de tranh xem so du phep cua nguoi khac.
+ * Public de co the goi truc tiep tu MainView hoac view/class khac neu can.
+ */
+public void viewOwnBalance(String empId) {
+    System.out.println("\n  === SO DU NGHI PHEP CUA TOI ===");
+    LeaveBalance balance = controller.getBalance(empId);
+    if (balance == null) {
+        System.out.println("  [!] Khong tim thay so du phep cua ban.");
+        return;
+    }
+    System.out.println("  ┌─────────────────────────────────────────┐");
+    System.out.printf( "  │  Phep nam : con %d / tong %d ngay         │%n",
+            balance.getAnnualRemaining(), balance.getAnnualTotal());
+    System.out.printf( "  │  Nghi om  : con %d / tong %d ngay         │%n",
+            balance.getSickRemaining(), balance.getSickTotal());
+    System.out.println("  └─────────────────────────────────────────┘");
+}
+    
 }
