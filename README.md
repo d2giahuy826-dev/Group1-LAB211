@@ -32,7 +32,7 @@ Nhóm implement và so sánh 4 cơ chế đồng bộ hóa (`NO_LOCK`, `SYNCHRON
 | **T3** | SalaryCalculator | BaseEntity, Employee, Department | Payroll & Attendance (Model) | Leave Management (Model) |
 | **T4** | Csv + PayrollRun + LeaveRequest Repo | PayrollEntryRepository + OptimisticLock + DuplicatePayment Exception | Employee + Attendance + Department Repo | LeaveBalanceRepository + InsufficientLeave + CsvParse Exception |
 | **T5** | PayrollController (NO_LOCK) | LeaveController (submit/approve/reject) | Fix LeaveBalanceRepository  blocker, ưu tiên số 1 | EmployeeController (wrap CRUD) |
-| **T6** | MainView + tích hợp + code review | PayrollView (bảng lương ASCII) | LeaveView (duyệt đơn ASCII) | EmployeeView + ReportView |
+| **T6** | MainView + tích hợp + code review | PayrollView (bảng lương ASCII) | Làm CRUD | EmployeeView + ReportView |
 | **T7** | FILE_LOCK mechanism | OPTIMISTIC mechanism + retry backoff | SYNCHRONIZED per-employee | NO_LOCK baseline + SynchronizationTest.java |
 | **T8** | SimulatorController (lõi, CountDownLatch) | Detector (detectDoublePayments/WrongLeave) | SimulatorView + bảng so sánh 4 cơ chế | Tích hợp vào MainView + chuẩn bị demo |
 | **T9** | Chạy full experiment (20×4×3) | Vẽ biểu đồ & phân tích | Viết report.docx (≥15 trang) | Làm slide.pptx |
@@ -161,7 +161,7 @@ java -cp out view.MainView
 |---|---|
 | Huy | `MainView` + integration: menu console điều hướng Payroll/Leave/Employee/Report, kết nối toàn bộ View ↔ Controller ↔ Repository. Code review cuối tuần: không có công thức lương trong View/Controller (tránh −5%). |
 | Duy | `PayrollView`: nhập tháng/năm → gọi `PayrollController` → in bảng lương ASCII theo phòng ban; xem chi tiết lương 1 nhân viên. |
-| Vương | `LeaveView`: xem danh sách đơn PENDING dạng bảng ASCII; nhập `requestId` → approve/reject → in balance mới sau khi trừ. |
+| Vương | `EmployeeView`: giao diện console cho CRUD nhân viên; thêm, xem danh sách, cập nhật và xóa nhân viên thông qua `EmployeeController`. |
 | Vy | `EmployeeView` + `ReportView`: CRUD employee từ console; `ReportView` tổng net pay tháng, số nhân viên xử lý, số đơn APPROVED. |
 
 ### Tuần 7 — Synchronization Mechanisms
