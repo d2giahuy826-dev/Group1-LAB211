@@ -161,7 +161,7 @@ java -cp out view.MainView
 |---|---|
 | Huy | `MainView` + integration: menu console điều hướng Payroll/Leave/Employee/Report, kết nối toàn bộ View ↔ Controller ↔ Repository. Code review cuối tuần: không có công thức lương trong View/Controller (tránh −5%). |
 | Duy | `PayrollView`: nhập tháng/năm → gọi `PayrollController` → in bảng lương ASCII theo phòng ban; xem chi tiết lương 1 nhân viên. |
-| Vương | `LeaveView`: xem danh sách đơn PENDING dạng bảng ASCII; nhập `requestId` → approve/reject → in balance mới sau khi trừ. |
+| Vương | `EmployeeView`: giao diện console cho CRUD nhân viên; thêm, xem danh sách, cập nhật và xóa nhân viên thông qua `EmployeeController`. |
 | Vy | `EmployeeView` + `ReportView`: CRUD employee từ console; `ReportView` tổng net pay tháng, số nhân viên xử lý, số đơn APPROVED. |
 
 ### Tuần 7 — Synchronization Mechanisms
