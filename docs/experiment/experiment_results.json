@@ -1,14 +1,14 @@
 [
-  {"mechanism":"NO_LOCK","run":1,"threads":20,"departments":20,"employees":1000,"success":20000,"doublePayment":19000,"wrongLeave":1775,"elapsedMs":1715,"TPS":11661.8076},
-  {"mechanism":"NO_LOCK","run":2,"threads":20,"departments":20,"employees":1000,"success":20000,"doublePayment":19000,"wrongLeave":1775,"elapsedMs":1456,"TPS":13736.2637},
-  {"mechanism":"NO_LOCK","run":3,"threads":20,"departments":20,"employees":1000,"success":20000,"doublePayment":19000,"wrongLeave":1775,"elapsedMs":1431,"TPS":13976.2404},
-  {"mechanism":"SYNCHRONIZED","run":1,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":94,"TPS":10638.2979},
-  {"mechanism":"SYNCHRONIZED","run":2,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":70,"TPS":14285.7143},
-  {"mechanism":"SYNCHRONIZED","run":3,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":96,"TPS":10416.6667},
-  {"mechanism":"OPTIMISTIC","run":1,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":101,"TPS":9900.9901},
+  {"mechanism":"NO_LOCK","run":1,"threads":20,"departments":20,"employees":1000,"success":20000,"doublePayment":19000,"wrongLeave":1775,"elapsedMs":1878,"TPS":10649.6273},
+  {"mechanism":"NO_LOCK","run":2,"threads":20,"departments":20,"employees":1000,"success":20000,"doublePayment":19000,"wrongLeave":1775,"elapsedMs":1158,"TPS":17271.1572},
+  {"mechanism":"NO_LOCK","run":3,"threads":20,"departments":20,"employees":1000,"success":20000,"doublePayment":19000,"wrongLeave":1775,"elapsedMs":1242,"TPS":16103.0596},
+  {"mechanism":"SYNCHRONIZED","run":1,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":92,"TPS":10869.5652},
+  {"mechanism":"SYNCHRONIZED","run":2,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":66,"TPS":15151.5152},
+  {"mechanism":"SYNCHRONIZED","run":3,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":66,"TPS":15151.5152},
+  {"mechanism":"OPTIMISTIC","run":1,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":118,"TPS":8474.5763},
   {"mechanism":"OPTIMISTIC","run":2,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":87,"TPS":11494.2529},
-  {"mechanism":"OPTIMISTIC","run":3,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":83,"TPS":12048.1928},
-  {"mechanism":"FILE_LOCK","run":1,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":285,"TPS":3508.7719},
-  {"mechanism":"FILE_LOCK","run":2,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":219,"TPS":4566.2100},
-  {"mechanism":"FILE_LOCK","run":3,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":168,"TPS":5952.3810}
+  {"mechanism":"OPTIMISTIC","run":3,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":60,"TPS":16666.6667},
+  {"mechanism":"FILE_LOCK","run":1,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":144,"TPS":6944.4444},
+  {"mechanism":"FILE_LOCK","run":2,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":207,"TPS":4830.9179},
+  {"mechanism":"FILE_LOCK","run":3,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":169,"TPS":5917.1598}
 ]
