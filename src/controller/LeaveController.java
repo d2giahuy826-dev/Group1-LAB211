@@ -55,7 +55,6 @@ public class LeaveController {
                 + today + ") " + daysInAdvance + " ngày.");
         }
 
-
         // Tạo requestId tự động
         String requestId = generateNextRequestId();
 
@@ -90,30 +89,33 @@ public class LeaveController {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Không tìm thấy đơn nghỉ phép: " + requestId));
 
-        // Bước 2: Kiểm tra balance còn đủ không
-        LeaveBalance balance = leaveBalanceRepo
-                .findByEmployeeId(request.getEmpId());
+        String empId = request.getEmpId();
+        synchronized (empId.intern()) {
+            // Bước 2: Kiểm tra balance còn đủ không
+            LeaveBalance balance = leaveBalanceRepo
+                    .findByEmployeeId(empId);
 
-        if (balance == null) {
-            throw new IllegalStateException(
-                    "Không tìm thấy LeaveBalance của: " + request.getEmpId());
+            if (balance == null) {
+                throw new IllegalStateException(
+                        "Không tìm thấy LeaveBalance của: " + empId);
+            }
+
+            if (!balance.hasEnoughLeave(request.getType(), request.getDays())) {
+                throw new InsufficientLeaveException(
+                        "Không đủ ngày phép. Loại: " + request.getType()
+                        + ", Cần: " + request.getDays()
+                        + ", Còn: " + (request.getType() == LeaveType.ANNUAL
+                                ? balance.getAnnualRemaining()
+                                : balance.getSickRemaining()));
+            }
+
+            // Bước 3: Duyệt đơn
+            leaveRequestRepo.approve(requestId, approverId);
+
+            // Bước 4: Trừ ngày phép
+            balance.deductLeave(request.getType(), request.getDays());
+            leaveBalanceRepo.update(balance);
         }
-
-        if (!balance.hasEnoughLeave(request.getType(), request.getDays())) {
-            throw new InsufficientLeaveException(
-                    "Không đủ ngày phép. Loại: " + request.getType()
-                    + ", Cần: " + request.getDays()
-                    + ", Còn: " + (request.getType() == LeaveType.ANNUAL
-                            ? balance.getAnnualRemaining()
-                            : balance.getSickRemaining()));
-        }
-
-        // Bước 3: Duyệt đơn
-        leaveRequestRepo.approve(requestId, approverId);
-
-        // Bước 4: Trừ ngày phép
-        balance.deductLeave(request.getType(), request.getDays());
-        leaveBalanceRepo.update(balance);
 
         System.out.println("[OK] Đã duyệt đơn: " + requestId
                 + " | Trừ " + request.getDays() + " ngày "
@@ -148,6 +150,7 @@ public class LeaveController {
     public List<LeaveRequest> getPendingRequests() {
         return leaveRequestRepo.findByStatus(LeaveStatus.PENDING);
     }
+    
     private final String ID_PREFIX      = "LR";
     private final int    ID_DIGIT_WIDTH = 6; // LR + 6 chữ số → VD: LR000001
  
@@ -155,10 +158,6 @@ public class LeaveController {
      * Sinh requestId moi theo format: "LR" + so tang dan, luon giu du
      * ID_DIGIT_WIDTH chu so (them so 0 phia truoc neu thieu).
      * VD: LR000001, LR000002, ... LR123456.
-     *
-     * Cach tinh: quet toan bo requestId hien co trong file, lay ra phan so
-     * sau tien to "LR", tim so LON NHAT, roi +1. Neu chua co don nao dung
-     * dinh dang nay thi bat dau tu 1.
      */
     private String generateNextRequestId() {
         int maxNumber = leaveRequestRepo.loadAll().stream()
@@ -173,5 +172,4 @@ public class LeaveController {
         int nextNumber = maxNumber + 1;
         return ID_PREFIX + String.format("%0" + ID_DIGIT_WIDTH + "d", nextNumber);
     }
- 
 }
