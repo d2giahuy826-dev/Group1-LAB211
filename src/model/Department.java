@@ -77,8 +77,8 @@ public class Department extends BaseEntity {
         setId(parts[0]);
         setName(parts[1]);
         setManagerId(parts[2]);
-        setTotalEmployees(Integer.parseInt(parts[3]));
-        setLocation(parts[4]); // Đọc dữ liệu vị trí từ mảng kết quả cắt chuỗi
+        setLocation(parts[3]); // Đọc dữ liệu vị trí từ mảng kết quả cắt chuỗi
+        setTotalEmployees(Integer.parseInt(parts[4]));
     }
 
     // 6. Cập nhật hàm toString() hỗ trợ in log kiểm tra khi test ứng dụng

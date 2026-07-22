@@ -1,0 +1,42 @@
+[
+  {
+    "mechanism": "NO_LOCK",
+    "avgSuccess": 20000.0,
+    "avgDoublePayment": 19000.0,
+    "avgWrongLeave": 1775.0,
+    "avgElapsedMs": 1914.3333333333333,
+    "avgTPS": 10733.4923,
+    "doublePaymentRate": 95.0,
+    "wrongLeaveRate": 88.75
+  },
+  {
+    "mechanism": "SYNCHRONIZED",
+    "avgSuccess": 1000.0,
+    "avgDoublePayment": 0.0,
+    "avgWrongLeave": 1775.0,
+    "avgElapsedMs": 252.33333333333334,
+    "avgTPS": 4045.5813333333335,
+    "doublePaymentRate": 0.0,
+    "wrongLeaveRate": 88.75
+  },
+  {
+    "mechanism": "OPTIMISTIC",
+    "avgSuccess": 1000.0,
+    "avgDoublePayment": 0.0,
+    "avgWrongLeave": 1775.0,
+    "avgElapsedMs": 277.6666666666667,
+    "avgTPS": 3638.660366666667,
+    "doublePaymentRate": 0.0,
+    "wrongLeaveRate": 88.75
+  },
+  {
+    "mechanism": "FILE_LOCK",
+    "avgSuccess": 1000.0,
+    "avgDoublePayment": 0.0,
+    "avgWrongLeave": 1775.0,
+    "avgElapsedMs": 27314.666666666668,
+    "avgTPS": 36.63136666666667,
+    "doublePaymentRate": 0.0,
+    "wrongLeaveRate": 88.75
+  }
+]

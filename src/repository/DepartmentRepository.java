@@ -4,16 +4,18 @@ import model.Department;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import util.ProjectPath;
 
 public class DepartmentRepository {
-    private final String FILE_PATH = "data/departments.csv";
+    private final String filePath;
 
     public DepartmentRepository() {
+        this.filePath = ProjectPath.resolve("data/departments.csv").toString();
         ensureFileExists();
     }
 
     private void ensureFileExists() {
-        File file = new File(FILE_PATH);
+        File file = new File(filePath);
         if (!file.exists()) {
             try {
                 file.getParentFile().mkdirs();
@@ -26,7 +28,7 @@ public class DepartmentRepository {
 
     public List<Department> getAll() {
         List<Department> list = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
@@ -41,7 +43,7 @@ public class DepartmentRepository {
     }
 
     public void saveAll(List<Department> list) {
-        try (PrintWriter pw = new PrintWriter(new FileWriter(FILE_PATH))) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(filePath))) {
             for (Department dept : list) {
                 pw.println(dept.toCsvLine()); // Xuất chuỗi CSV kết hợp location
             }
@@ -61,5 +63,17 @@ public class DepartmentRepository {
                 .filter(d -> d.getId().equals(id))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public boolean update(Department dept) {
+        List<Department> list = getAll();
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getId().equals(dept.getId())) {
+                list.set(i, dept);
+                saveAll(list);
+                return true;
+            }
+        }
+        return false;
     }
 }

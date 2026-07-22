@@ -6,13 +6,14 @@ import java.io.*;
 import java.util.*;
 import model.PayrollEntry;
 import model.PayStatus;
+import util.ProjectPath;
 
 public class PayrollEntryRepository {
 
     private final String filePath;
 
     public PayrollEntryRepository(String filePath) {
-        this.filePath = filePath;
+        this.filePath = ProjectPath.resolve(filePath).toString();
     }
 
     public List<PayrollEntry> findAll() {

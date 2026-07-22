@@ -1,0 +1,14 @@
+[
+  {"mechanism":"NO_LOCK","run":1,"threads":20,"departments":20,"employees":1000,"success":20000,"doublePayment":19000,"wrongLeave":1775,"elapsedMs":1593,"TPS":12554.9278},
+  {"mechanism":"NO_LOCK","run":2,"threads":20,"departments":20,"employees":1000,"success":20000,"doublePayment":19000,"wrongLeave":1775,"elapsedMs":1303,"TPS":15349.1942},
+  {"mechanism":"NO_LOCK","run":3,"threads":20,"departments":20,"employees":1000,"success":20000,"doublePayment":19000,"wrongLeave":1775,"elapsedMs":1246,"TPS":16051.3644},
+  {"mechanism":"SYNCHRONIZED","run":1,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":108,"TPS":9259.2593},
+  {"mechanism":"SYNCHRONIZED","run":2,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":77,"TPS":12987.0130},
+  {"mechanism":"SYNCHRONIZED","run":3,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":74,"TPS":13513.5135},
+  {"mechanism":"OPTIMISTIC","run":1,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":91,"TPS":10989.0110},
+  {"mechanism":"OPTIMISTIC","run":2,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":75,"TPS":13333.3333},
+  {"mechanism":"OPTIMISTIC","run":3,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":63,"TPS":15873.0159},
+  {"mechanism":"FILE_LOCK","run":1,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":162,"TPS":6172.8395},
+  {"mechanism":"FILE_LOCK","run":2,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":139,"TPS":7194.2446},
+  {"mechanism":"FILE_LOCK","run":3,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":353,"TPS":2832.8612}
+]
