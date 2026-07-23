@@ -1,0 +1,577 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam linetype ortho
+
+title Sơ đồ UML Class Diagram Hoàn Chỉnh - Hệ thống Quản lý Lương & Nhân sự
+
+' ==========================================
+' PACKAGE: EXCEPTION
+' ==========================================
+package "exception" {
+    class Exception {
+    }
+
+    class CsvParseException {
+        - lineContent: String
+        - lineNumber: int
+        + CsvParseException(message: String)
+        + CsvParseException(message: String, cause: Throwable)
+        + CsvParseException(message: String, lineContent: String, lineNumber: int)
+        + getLineContent(): String
+        + getLineNumber(): int
+    }
+
+    class DuplicatePaymentException {
+        + DuplicatePaymentException(message: String)
+    }
+
+    class InsufficientLeaveException {
+        + InsufficientLeaveException(message: String)
+    }
+
+    class OptimisticLockException {
+        + OptimisticLockException(message: String)
+    }
+
+    CsvParseException -up-|> Exception
+    DuplicatePaymentException -up-|> Exception
+    InsufficientLeaveException -up-|> Exception
+    OptimisticLockException -up-|> Exception
+}
+
+' ==========================================
+' PACKAGE: MODEL
+' ==========================================
+package "model" {
+    interface CsvMappable {
+        + toCsvLine(): String
+        + fromCsvLine(csvLine: String): void
+    }
+
+    abstract class BaseEntity {
+        # id: String
+        + BaseEntity()
+        + BaseEntity(id: String)
+        + getId(): String
+        + setId(id: String): void
+        # validateRequired(value: String, fieldName: String): void
+        # validateNonNegative(value: double, fieldName: String): void
+        # validateNonNegative(value: int, fieldName: String): void
+        + {abstract} toCsvLine(): String
+        + {abstract} fromCsvLine(csvLine: String): void
+        + toString(): String
+    }
+    
+    BaseEntity .up.|> CsvMappable
+
+    class AttendanceRecord {
+        - empId: String
+        - month: int
+        - year: int
+        - workDays: int
+        - absenceDays: int
+        - overtimeHours: int
+        - lateCount: int
+        + AttendanceRecord()
+        + AttendanceRecord(attendId: String, empId: String, month: int, year: int, workDays: int, absenceDays: int, overtimeHours: int, lateCount: int)
+        + toCsvLine(): String
+        + fromCsvLine(csvLine: String): void
+        + calculateTotalWorkHours(): double
+        + hasFullAttendance(): boolean
+        + getEmpId(): String
+        + setEmpId(empId: String): void
+        + getMonth(): int
+        + setMonth(month: int): void
+        + getYear(): int
+        + setYear(year: int): void
+        + getWorkDays(): int
+        + setWorkDays(workDays: int): void
+        + getAbsenceDays(): int
+        + setAbsenceDays(absenceDays: int): void
+        + getOvertimeHours(): int
+        + setOvertimeHours(overtimeHours: int): void
+        + getLateCount(): int
+        + setLateCount(lateCount: int): void
+        + toString(): String
+    }
+
+    class Department {
+        - name: String
+        - managerId: String
+        - totalEmployees: int
+        - location: String
+        + Department()
+        + Department(id: String, name: String, managerId: String, totalEmployees: int, location: String)
+        + toCsvLine(): String
+        + fromCsvLine(csvLine: String): void
+        + getName(): String
+        + setName(name: String): void
+        + getManagerId(): String
+        + setManagerId(managerId: String): void
+        + getTotalEmployees(): int
+        + setTotalEmployees(totalEmployees: int): void
+        + getLocation(): String
+        + setLocation(location: String): void
+        + toString(): String
+    }
+
+    class Employee {
+        - fullName: String
+        - deptId: String
+        - empType: EmpType
+        - baseSalary: double
+        - taxRate: double
+        - joinDate: LocalDate
+        - status: EmployeeStatus
+        + Employee()
+        + Employee(empId: String, fullName: String, deptId: String, empType: EmpType, baseSalary: double, taxRate: double, joinDate: LocalDate, status: EmployeeStatus)
+        + toCsvLine(): String
+        + fromCsvLine(csvLine: String): void
+        + isActive(): boolean
+        + getFullName(): String
+        + setFullName(fullName: String): void
+        + getDeptId(): String
+        + setDeptId(deptId: String): void
+        + getEmpType(): EmpType
+        + setEmpType(empType: EmpType): void
+        + getBaseSalary(): double
+        + setBaseSalary(baseSalary: double): void
+        + getTaxRate(): double
+        + setTaxRate(taxRate: double): void
+        + getJoinDate(): LocalDate
+        + setJoinDate(joinDate: LocalDate): void
+        + getStatus(): EmployeeStatus
+        + setStatus(status: EmployeeStatus): void
+        + toString(): String
+    }
+
+    enum EmployeeStatus {
+        + ACTIVE
+        + INACTIVE
+        + isActive(): boolean
+        + {static} fromString(value: String): EmployeeStatus
+    }
+
+    enum EmpType {
+        + FULLTIME
+        + PARTTIME
+        + getDefaultTaxRate(): double
+        + fromString(value: String): EmpType
+    }
+
+    class LeaveBalance {
+        - empId: String
+        - year: int
+        - annualTotal: int
+        - annualUsed: int
+        - annualRemaining: int
+        - sickTotal: int
+        - sickUsed: int
+        - sickRemaining: int
+        - version: int
+        + LeaveBalance()
+        + LeaveBalance(balanceId: String, empId: String, year: int, annualTotal: int, annualUsed: int, sickTotal: int, sickUsed: int, version: int)
+        + toCsvLine(): String
+        + fromCsvLine(csvLine: String): void
+        + deductLeave(type: LeaveType, days: int): void
+        + hasEnoughLeave(type: LeaveType, days: int): boolean
+        + getEmpId(): String
+        + setEmpId(empId: String): void
+        + getYear(): int
+        + setYear(year: int): void
+        + getAnnualTotal(): int
+        + setAnnualTotal(annualTotal: int): void
+        + getAnnualUsed(): int
+        + setAnnualUsed(annualUsed: int): void
+        + getAnnualRemaining(): int
+        + getSickTotal(): int
+        + setSickTotal(sickTotal: int): void
+        + getSickUsed(): int
+        + setSickUsed(sickUsed: int): void
+        + getSickRemaining(): int
+        + getVersion(): int
+        + setVersion(version: int): void
+        + toString(): String
+    }
+
+    class LeaveRequest {
+        - empId: String
+        - type: LeaveType
+        - startDate: LocalDate
+        - endDate: LocalDate
+        - days: int
+        - reason: String
+        - status: LeaveStatus
+        - approvedBy: String
+        - createdAt: String
+        + LeaveRequest()
+        + LeaveRequest(requestId: String, empId: String, type: LeaveType, startDate: LocalDate, endDate: LocalDate, days: int, reason: String, status: LeaveStatus, approvedBy: String, createdAt: String)
+        + toCsvLine(): String
+        + fromCsvLine(line: String): void
+        + isApproved(): boolean
+        + isPending(): boolean
+        + approve(approverId: String): void
+        + reject(approverId: String): void
+        - escapeCsv(value: String): String
+        + getEmployeeId(): String
+        + getEmpId(): String
+        + setEmpId(empId: String): void
+        + getType(): LeaveType
+        + setType(type: LeaveType): void
+        + getStartDate(): LocalDate
+        + setStartDate(startDate: LocalDate): void
+        + getEndDate(): LocalDate
+        + setEndDate(endDate: LocalDate): void
+        + getDays(): int
+        + setDays(days: int): void
+        + getReason(): String
+        + setReason(reason: String): void
+        + getStatus(): LeaveStatus
+        + setStatus(status: LeaveStatus): void
+        + getApprovedBy(): String
+        + setApprovedBy(approvedBy: String): void
+        + getCreatedAt(): String
+        + setCreatedAt(createdAt: String): void
+        + toString(): String
+    }
+
+    enum LeaveStatus {
+        + PENDING
+        + APPROVED
+        + REJECTED
+        + isProcessed(): boolean
+        + {static} fromString(value: String): LeaveStatus
+    }
+
+    enum LeaveType {
+        + ANNUAL
+        + SICK
+        + getMaxDaysPerYear(): int
+        + {static} fromString(value: String): LeaveType
+    }
+
+    class PayrollEntry {
+        - empId: String
+        - deptId: String
+        - month: int
+        - year: int
+        - baseSalary: long
+        - overtimePay: long
+        - absenceDeduction: long
+        - bonus: long
+        - taxAmount: long
+        - netSalary: long
+        - status: PayStatus
+        - version: int
+        - processedAt: String
+        + PayrollEntry()
+        + toCsvLine(): String
+        + fromCsvLine(csvLine: String): void
+        + isProcessed(): boolean
+        + markProcessed(processedDate: String): void
+        + getEmpId(): String
+        + setEmpId(empId: String): void
+        + getDeptId(): String
+        + setDeptId(deptId: String): void
+        + getMonth(): int
+        + setMonth(month: int): void
+        + getYear(): int
+        + setYear(year: int): void
+        + getBaseSalary(): long
+        + setBaseSalary(baseSalary: long): void
+        + getOvertimePay(): long
+        + setOvertimePay(overtimePay: long): void
+        + getAbsenceDeduction(): long
+        + setAbsenceDeduction(absenceDeduction: long): void
+        + getBonus(): long
+        + setBonus(bonus: long): void
+        + getTaxAmount(): long
+        + setTaxAmount(taxAmount: long): void
+        + getNetSalary(): long
+        + setNetSalary(netSalary: long): void
+        + getStatus(): PayStatus
+        + setStatus(status: PayStatus): void
+        + getVersion(): int
+        + setVersion(version: int): void
+        + getProcessedAt(): String
+        + setProcessedAt(processedAt: String): void
+        + toString(): String
+    }
+
+    enum PayStatus {
+        + PENDING
+        + PROCESSED
+        + isProcessed(): boolean
+        + {static} fromString(value: String): PayStatus
+    }
+
+    class PayrollRun {
+        - month: int
+        - year: int
+        - triggeredBy: String
+        - totalEmployees: int
+        - totalNetPay: long
+        - status: RunStatus
+        - startedAt: String
+        - completedAt: String
+        + PayrollRun()
+        + PayrollRun(runId: String, month: int, year: int, triggeredBy: String, totalEmployees: int, totalNetPay: long, status: RunStatus, startedAt: String, completedAt: String)
+        + toCsvLine(): String
+        + fromCsvLine(csvLine: String): void
+        + isCompleted(): boolean
+        + markCompleted(completedDate: String): void
+        + getMonth(): int
+        + setMonth(month: int): void
+        + getYear(): int
+        + setYear(year: int): void
+        + getTriggeredBy(): String
+        + setTriggeredBy(triggeredBy: String): void
+        + getTotalEmployees(): int
+        + setTotalEmployees(totalEmployees: int): void
+        + getTotalNetPay(): long
+        + setTotalNetPay(totalNetPay: long): void
+        + getStatus(): RunStatus
+        + setStatus(status: RunStatus): void
+        + getStartedAt(): String
+        + setStartedAt(startedAt: String): void
+        + getCompletedAt(): String
+        + setCompletedAt(completedAt: String): void
+        + toString(): String
+    }
+
+    enum RunStatus {
+        + PENDING
+        + COMPLETED
+        + isCompleted(): boolean
+        + {static} fromString(value: String): RunStatus
+    }
+
+    class SalaryCalculator {
+        + {static} STANDARD_WORK_DAYS: int = 22
+        + {static} HOURS_PER_DAY: int = 8
+        + {static} OT_MULTIPLIER: double = 1.5
+        + {static} BONUS_RATE: double = 0.05
+        + {static} DEFAULT_FULLTIME_TAX_RATE: double = 0.10
+        + {static} DEFAULT_PARTTIME_TAX_RATE: double = 0.05
+        - baseSalary: double
+        - overtimeHours: int
+        - absenceDays: int
+        - taxRate: double
+        - overtimePay: double
+        - absenceDeduction: double
+        - attendanceBonus: double
+        - grossSalary: double
+        - taxAmount: double
+        - netSalary: double
+        - calculated: boolean = false
+        + SalaryCalculator()
+        + SalaryCalculator(baseSalary: double, overtimeHours: int, absenceDays: int, taxRate: double)
+        + SalaryCalculator(baseSalary: double, overtimeHours: int, absenceDays: int, type: EmpType)
+        + {static} forFulltime(baseSalary: double, overtimeHours: int, absenceDays: int): SalaryCalculator
+        + {static} forParttime(baseSalary: double, overtimeHours: int, absenceDays: int): SalaryCalculator
+        + calculate(): SalaryCalculator
+        - ensureCalculated(): void
+        + getOvertimePay(): double
+        + getAbsenceDeduction(): double
+        + getAttendanceBonus(): double
+        + getGrossSalary(): double
+        + getTaxAmount(): double
+        + getNetSalary(): double
+        + getBaseSalary(): double
+        + setBaseSalary(baseSalary: double): void
+        + getOvertimeHours(): int
+        + setOvertimeHours(overtimeHours: int): void
+        + getAbsenceDays(): int
+        + setAbsenceDays(absenceDays: int): void
+        + getTaxRate(): double
+        + setTaxRate(taxRate: double): void
+        + toString(): String
+    }
+
+    ' Mối quan hệ kế thừa và liên kết nội bộ của gói Model
+    AttendanceRecord -up-|> BaseEntity
+    Department -up-|> BaseEntity
+    Employee -up-|> BaseEntity
+    LeaveBalance -up-|> BaseEntity
+    LeaveRequest -up-|> BaseEntity
+    PayrollEntry -up-|> BaseEntity
+    PayrollRun -up-|> BaseEntity
+
+    Employee --> EmployeeStatus
+    Employee --> EmpType
+    LeaveBalance --> LeaveType
+    LeaveRequest --> LeaveType
+    LeaveRequest --> LeaveStatus
+    PayrollEntry --> PayStatus
+    PayrollRun --> RunStatus
+    SalaryCalculator .down.> EmpType : uses
+}
+
+' ==========================================
+' PACKAGE: REPOSITORY
+' ==========================================
+package "repository" {
+    abstract class CsvRepository<T extends BaseEntity> {
+        # lock: ReentrantReadWriteLock
+        # readLock: ReentrantReadWriteLock.ReadLock
+        # writeLock: ReentrantReadWriteLock.WriteLock
+        # {abstract} getFilePath(): String
+        # {abstract} createEntity(): T
+        + loadAll(): List<T>
+        + saveAll(entities: List<T>): void
+        + findById(id: String): Optional<T>
+        + findByField(fieldName: String, value: String): List<T>
+        # matchesField(entity: T, fieldName: String, value: String): boolean
+        # findByPredicate(predicate: Predicate<T>): List<T>
+        + add(entity: T): void
+        + update(entity: T): boolean
+        + delete(id: String): boolean
+        # getHeader(): String
+        + count(): int
+        + fileExists(): boolean
+        + existsById(id: String): boolean
+    }
+
+    class AttendanceRepository {
+        - FILE_PATH: String = "data/attendance.csv"
+        + AttendanceRepository()
+        - ensureFileExists(): void
+        - isHeaderLine(line: String, firstColumnName: String): boolean
+        + getAll(): List<AttendanceRecord>
+        + saveAll(list: List<AttendanceRecord>): void
+        + add(record: AttendanceRecord): void
+        + findByEmployeeId(employeeId: String): List<AttendanceRecord>
+    }
+
+    class DepartmentRepository {
+        - FILE_PATH: String = "data/departments.csv"
+        + DepartmentRepository()
+        - ensureFileExists(): void
+        + getAll(): List<Department>
+        + saveAll(list: List<Department>): void
+        + add(dept: Department): void
+        + findById(id: String): Department
+    }
+
+    class EmployeeRepository {
+        - {static} FILE_PATH: String = "data/employees.csv"
+        # getFilePath(): String
+        # createEntity(): Employee
+        # getHeader(): String
+        # matchesField(employee: Employee, fieldName: String, value: String): boolean
+    }
+
+    class LeaveBalanceRepository {
+        - balances: List<LeaveBalance>
+        + add(balance: LeaveBalance): void
+        + findByEmployeeId(employeeId: String): LeaveBalance
+        + getAll(): List<LeaveBalance>
+    }
+
+    class LeaveRequestRepository {
+        - {static} FILE_PATH: String = "data/leave_requests.csv"
+        - {static} HEADER: String = "requestId,empId,leaveType,startDate,endDate,days,..."
+        # getFilePath(): String
+        # createEntity(): LeaveRequest
+        # getHeader(): String
+        # matchesField(req: LeaveRequest, fieldName: String, value: String): boolean
+        + findByEmpId(empId: String): List<LeaveRequest>
+        + findByStatus(status: LeaveStatus): List<LeaveRequest>
+        + findByEmpIdAndStatus(empId: String, status: LeaveStatus): List<LeaveRequest>
+        + findByEmpIdAndTypeAndStatus(empId: String, leaveType: LeaveType, status: LeaveStatus): List<LeaveRequest>
+        + approve(requestId: String, approverId: String): void
+        + reject(requestId: String, approverId: String): void
+        + add(request: LeaveRequest): void
+        + sumApprovedDays(empId: String, leaveType: LeaveType): int
+        + countPending(): long
+    }
+
+    class PayrollEntryRepository {
+        - filePath: String
+        + PayrollEntryRepository(filePath: String)
+        - isHeaderLine(line: String, firstColumnName: String): boolean
+        - writeAll(entries: List<PayrollEntry>): void
+        + findAll(): List<PayrollEntry>
+        + findById(id: String): PayrollEntry
+        + save(newEntry: PayrollEntry): void
+        + update(updatedEntry: PayrollEntry): void
+        + processWithSync(payrollId: String): void
+        + processWithOptimistic(updatedEntry: PayrollEntry, expectedVersion: int): void
+    }
+
+    class PayrollRunRepository {
+        - {static} FILE_PATH: String = "data/payroll_runs.csv"
+        - {static} HEADER: String = "runId,month,year,triggeredBy,totalEmployees,..."
+        # getFilePath(): String
+        # createEntity(): PayrollRun
+        # getHeader(): String
+        # matchesField(run: PayrollRun, fieldName: String, value: String): boolean
+        + findByMonthAndYear(month: int, year: int): Optional<PayrollRun>
+        + findPending(): List<PayrollRun>
+        + findCompleted(): List<PayrollRun>
+        + findLatest(): Optional<PayrollRun>
+        + markCompleted(runId: String, completedDate: String): void
+        + add(run: PayrollRun): void
+        + sumTotalNetPayCompleted(): long
+    }
+}
+
+' ====================================================================
+' THIẾT LẬP LIÊN KẾT LIÊN PACKAGE (SỬA LỖI MẤT HỘP MODEL Ở HÌNH 059a4a.jpg)
+' ====================================================================
+
+' 1. Các liên kết Kế thừa Generics tường minh từ Repository sang Model
+EmployeeRepository -up-|> CsvRepository
+EmployeeRepository .down.> model.Employee : «binds T -> Employee»
+
+LeaveRequestRepository -up-|> CsvRepository
+LeaveRequestRepository .down.> model.LeaveRequest : «binds T -> LeaveRequest»
+
+PayrollRunRepository -up-|> CsvRepository
+PayrollRunRepository .down.> model.PayrollRun : «binds T -> PayrollRun»
+
+' 2. Các mối quan hệ quản lý thực thể trực tiếp (Ép Render Package Model)
+AttendanceRepository "1" --> "*" model.AttendanceRecord : manages
+DepartmentRepository "1" --> "*" model.Department : manages
+LeaveBalanceRepository "1" --> "*" model.LeaveBalance : manages
+PayrollEntryRepository "1" --> "*" model.PayrollEntry : manages
+
+' 3. Ánh xạ các ngoại lệ (Exception Triggers)
+PayrollEntryRepository .left.> exception.DuplicatePaymentException : throws
+PayrollEntryRepository .left.> exception.OptimisticLockException : throws
+
+' ==========================================
+' PACKAGE: TEST
+' ==========================================
+package "test" {
+    class AttendancePerformanceTest <<test>> {
+        + {static} main(args: String[]): void
+    }
+
+    class EmployeeRepositoryTest <<test>> {
+        + {static} main(args: String[]): void
+    }
+
+    class PayrollConcurrencyTest <<test>> {
+        - {static} alreadyPaid: boolean = false
+        + {static} processPayroll(employeeId: String): void
+        + {static} main(args: String[]): void
+    }
+
+    class RunSalaryCalculator <<test>> {
+        + {static} main(args: String[]): void
+        ~ testFulltime_DuNgay_CoOT(): void
+        ~ testParttime_DuNgay_KhongOT(): void
+        ~ testNghiKhongPhep_MatBonus(): void
+        ~ testNghi22Ngay_NetBang0(): void
+        ~ testChuaCalculate_NemException(): void
+    }
+
+    AttendancePerformanceTest .down.> repository.AttendanceRepository : tests
+    EmployeeRepositoryTest .down.> repository.EmployeeRepository : tests
+    EmployeeRepositoryTest .down.> model.Employee : uses
+    RunSalaryCalculator .down.> model.SalaryCalculator : tests
+}
+
+@enduml

@@ -56,7 +56,7 @@ public class AttendanceRecord extends BaseEntity {
     }
 
     /**
-     * Parse từ dòng CSV (8 cột).
+     * Parse từ dòng CSV (8 cột). Chuyen dt vao chuoi csv. Doc tu chuoi csv vao doi tuong
      * Format: attendId,empId,month,year,workDays,absenceDays,overtimeHours,lateCount
      */
     @Override

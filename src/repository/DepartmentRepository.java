@@ -32,6 +32,7 @@ public class DepartmentRepository {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
+                if (isHeaderLine(line, "deptId")) continue;
                 Department dept = new Department();
                 dept.fromCsvLine(line); // Đọc chuỗi CSV 5 trường có location
                 list.add(dept);
@@ -42,8 +43,14 @@ public class DepartmentRepository {
         return list;
     }
 
+    private boolean isHeaderLine(String line, String firstColumnName) {
+        String[] parts = line.split(",", -1);
+        return parts.length > 0 && parts[0].trim().equalsIgnoreCase(firstColumnName);
+    }
+
     public void saveAll(List<Department> list) {
         try (PrintWriter pw = new PrintWriter(new FileWriter(filePath))) {
+            pw.println("deptId,deptName,managerId,location,headCount");
             for (Department dept : list) {
                 pw.println(dept.toCsvLine()); // Xuất chuỗi CSV kết hợp location
             }
@@ -64,7 +71,7 @@ public class DepartmentRepository {
                 .findFirst()
                 .orElse(null);
     }
-
+    
     public boolean update(Department dept) {
         List<Department> list = getAll();
         for (int i = 0; i < list.size(); i++) {

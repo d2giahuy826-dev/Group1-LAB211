@@ -1,14 +1,14 @@
 [
-  {"mechanism":"NO_LOCK","run":1,"threads":20,"departments":20,"employees":1000,"success":20000,"doublePayment":19000,"wrongLeave":1775,"elapsedMs":1715,"TPS":11661.8076},
-  {"mechanism":"NO_LOCK","run":2,"threads":20,"departments":20,"employees":1000,"success":20000,"doublePayment":19000,"wrongLeave":1775,"elapsedMs":1456,"TPS":13736.2637},
-  {"mechanism":"NO_LOCK","run":3,"threads":20,"departments":20,"employees":1000,"success":20000,"doublePayment":19000,"wrongLeave":1775,"elapsedMs":1431,"TPS":13976.2404},
-  {"mechanism":"SYNCHRONIZED","run":1,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":94,"TPS":10638.2979},
-  {"mechanism":"SYNCHRONIZED","run":2,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":70,"TPS":14285.7143},
-  {"mechanism":"SYNCHRONIZED","run":3,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":96,"TPS":10416.6667},
-  {"mechanism":"OPTIMISTIC","run":1,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":101,"TPS":9900.9901},
-  {"mechanism":"OPTIMISTIC","run":2,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":87,"TPS":11494.2529},
-  {"mechanism":"OPTIMISTIC","run":3,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":83,"TPS":12048.1928},
-  {"mechanism":"FILE_LOCK","run":1,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":285,"TPS":3508.7719},
-  {"mechanism":"FILE_LOCK","run":2,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":219,"TPS":4566.2100},
-  {"mechanism":"FILE_LOCK","run":3,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":168,"TPS":5952.3810}
+  {"mechanism":"NO_LOCK","run":1,"threads":20,"departments":20,"employees":1000,"success":20000,"doublePayment":19000,"wrongLeave":1775,"elapsedMs":1593,"TPS":12554.9278},
+  {"mechanism":"NO_LOCK","run":2,"threads":20,"departments":20,"employees":1000,"success":20000,"doublePayment":19000,"wrongLeave":1775,"elapsedMs":1303,"TPS":15349.1942},
+  {"mechanism":"NO_LOCK","run":3,"threads":20,"departments":20,"employees":1000,"success":20000,"doublePayment":19000,"wrongLeave":1775,"elapsedMs":1246,"TPS":16051.3644},
+  {"mechanism":"SYNCHRONIZED","run":1,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":108,"TPS":9259.2593},
+  {"mechanism":"SYNCHRONIZED","run":2,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":77,"TPS":12987.0130},
+  {"mechanism":"SYNCHRONIZED","run":3,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":74,"TPS":13513.5135},
+  {"mechanism":"OPTIMISTIC","run":1,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":91,"TPS":10989.0110},
+  {"mechanism":"OPTIMISTIC","run":2,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":75,"TPS":13333.3333},
+  {"mechanism":"OPTIMISTIC","run":3,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":63,"TPS":15873.0159},
+  {"mechanism":"FILE_LOCK","run":1,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":162,"TPS":6172.8395},
+  {"mechanism":"FILE_LOCK","run":2,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":139,"TPS":7194.2446},
+  {"mechanism":"FILE_LOCK","run":3,"threads":20,"departments":20,"employees":1000,"success":1000,"doublePayment":0,"wrongLeave":1775,"elapsedMs":353,"TPS":2832.8612}
 ]
