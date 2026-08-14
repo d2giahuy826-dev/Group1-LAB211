@@ -12,6 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -116,16 +117,18 @@ public class PayrollController {
     public List<PayrollEntry> getEntriesByMonthYear(int month, int year) {
         return payrollEntryRepo.findAll().stream()
                 .filter(e -> e.getMonth() == month && e.getYear() == year)
+                .map(this::refreshStatus)
                 .collect(Collectors.toList());
     }
 
     public PayrollEntry getEntryByEmpAndMonth(String empId, int month, int year) {
-        return payrollEntryRepo.findAll().stream()
+        PayrollEntry entry = payrollEntryRepo.findAll().stream()
                 .filter(e -> e.getEmpId().equals(empId)
                         && e.getMonth() == month
                         && e.getYear() == year)
                 .findFirst()
                 .orElse(null);
+        return refreshStatus(entry);
     }
 
     public List<PayrollRun> getAllRuns() {
@@ -232,9 +235,54 @@ public class PayrollController {
         entry.setBonus((long) calc.getAttendanceBonus());
         entry.setTaxAmount((long) calc.getTaxAmount());
         entry.setNetSalary((long) calc.getNetSalary());
-        entry.setStatus(PayStatus.PENDING);
         entry.setVersion(0);
-        entry.setProcessedAt(today);
+
+        // ── Trang thai PENDING / PROCESSED dua tren thoi gian thuc ──────────
+        // Neu ngay hien tai da den/qua ngay cuoi cung cua thang luong nay
+        // (vd: chay luong thang 7/2026, hom nay >= 31/07/2026) → PROCESSED.
+        // Neu chua den ngay cuoi thang → PENDING.
+        if (isReachedEndOfMonth(month, year)) {
+            entry.setStatus(PayStatus.PROCESSED);
+            entry.setProcessedAt(today);
+        } else {
+            entry.setStatus(PayStatus.PENDING);
+            entry.setProcessedAt("");
+        }
+
+        return entry;
+    }
+
+    /**
+     * Kiem tra ngay hien tai (LocalDate.now()) da den hoac qua ngay cuoi cung
+     * cua thang/nam luong duoc truyen vao hay chua. Tu dong xu ly dung cho
+     * moi thang (28/29/30/31 ngay) nho YearMonth.atEndOfMonth().
+     */
+    private boolean isReachedEndOfMonth(int month, int year) {
+        YearMonth ym = YearMonth.of(year, month);
+        LocalDate endOfMonth = ym.atEndOfMonth();
+        LocalDate today = LocalDate.now();
+        return !today.isBefore(endOfMonth); // today >= endOfMonth
+    }
+
+    /**
+     * Cap nhat lai trang thai cua mot PayrollEntry theo thoi gian thuc moi khi
+     * duoc truy van (xem bang luong / xem chi tiet). Dieu nay dam bao entry
+     * duoc tao dau thang (con PENDING) se tu dong hien PROCESSED khi da den
+     * ngay cuoi thang, ke ca khi khong chay lai payroll.
+     *
+     * Luu y: chi cap nhat trong bo nho de hien thi; neu muon ghi de xuong
+     * file CSV, can bo sung method update(entry) trong PayrollEntryRepository
+     * va goi no o day.
+     */
+    private PayrollEntry refreshStatus(PayrollEntry entry) {
+        if (entry == null) return null;
+
+        if (isReachedEndOfMonth(entry.getMonth(), entry.getYear())
+                && entry.getStatus() != PayStatus.PROCESSED) {
+            String processedDate = LocalDate.now().format(DATE_FMT);
+            entry.markProcessed(processedDate);
+        }
+
         return entry;
     }
 
